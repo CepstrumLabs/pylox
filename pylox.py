@@ -42,8 +42,7 @@ def _run_file(file):
         file (pathlib.Path): The file to run
     """
     with open(file, "r") as sourcefile:
-        source = file.read()
-    
+        source = sourcefile.read()
     run(source=source)
 
 def run(source):
@@ -52,7 +51,36 @@ def run(source):
     Args:
         source (string): The LOX source code to run
     """
+    scanner = LoxScanner(source=source)
+    tokens = scanner.scan_tokens()
 
+    for token in tokens:
+        print(token)
+
+
+class LoxScanner:
+
+    def __init__(self, source):
+        self.source = source
+        self.tokens = []
+    
+    def scan_tokens(self):
+        """
+        """
+        return self.tokens
+
+
+class LoxToken:
+
+    def __init__(self, type_, value):
+        self.type = type_
+        self.value = value
+
+    def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}(type_={self.type}, value={self.value})"
 
 if __name__ == "__main__":
     USAGE = """
