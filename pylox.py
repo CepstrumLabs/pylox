@@ -1,5 +1,17 @@
 import pathlib
 
+
+LOGO = r"""
+  _     _____  __
+ | |   / _ \ \/ /
+ | |  | | | \  / 
+ | |__| |_| /  \ 
+ |_____\___/_/\_\
+                 
+LOX interactive interpreter
+pylox v0.0.1
+2022 @CepstrumLabs
+    """
 class LoxException(Exception):
     pass
 
@@ -16,16 +28,7 @@ def run_file(file=None):
 def _run_prompt():
     """Run LOX source code line by line
     """
-    print("""  _     _____  __
- | |   / _ \ \/ /
- | |  | | | \  / 
- | |__| |_| /  \ 
- |_____\___/_/\_\\
-                 
-LOX interactive interpreter
-pylox v0.0.1
-2022 @CepstrumLabs
-    """)
+    print(LOGO)
     while True:
         line = input(">>> ")
         if line == "exit()":
