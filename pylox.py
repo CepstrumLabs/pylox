@@ -15,50 +15,58 @@ pylox v0.0.1
 class LoxException(Exception):
     pass
 
-def run_file(file=None):
-    if not file:
-        _run_prompt()
-    else:
-        filepath = pathlib.Path(file)
-    if not filepath.exists():
-        raise LoxException("file %s does not exist" % filepath)
-    else:
-        _run_file(file=filepath)
 
-def _run_prompt():
-    """Run LOX source code line by line
-    """
-    print(LOGO)
-    while True:
-        line = input(">>> ")
-        if line == "exit()":
-            break
-        if not line:
-            break
-        run(source=line)
+class LoxIntepreter:
+
+    def __init__(self):
+        self.had_error = False
+
+    def run_file(self, file=None):
+        if not file:
+            self._run_prompt()
+        else:
+            filepath = pathlib.Path(file)
+        if not filepath.exists():
+            raise LoxException("file %s does not exist" % filepath)
+        else:
+            self._run_file(file=filepath)
+
+    def _run_prompt(self):
+        """Run LOX source code line by line
+        """
+        print(LOGO)
+        while True:
+            line = input(">>> ")
+            if line == "exit()":
+                break
+            if not line:
+                break
+            self.run(source=line)
+            # Do not kill all the interactιve session because of one line
+            self.had_error = False
 
 
-def _run_file(file):
-    """Run a file containing LOX source code
+    def _run_file(self, file):
+        """Run a file containing LOX source code
 
-    Args:
-        file (pathlib.Path): The file to run
-    """
-    with open(file, "r") as sourcefile:
-        source = sourcefile.read()
-    run(source=source)
+        Args:
+            file (pathlib.Path): The file to run
+        """
+        with open(file, "r") as sourcefile:
+            source = sourcefile.read()
+        self.run(source=source)
 
-def run(source):
-    """Run raw LOX source code in the form of string
+    def run(self, source):
+        """Run raw LOX source code in the form of string
 
-    Args:
-        source (string): The LOX source code to run
-    """
-    scanner = LoxScanner(source=source)
-    tokens = scanner.scan_tokens()
+        Args:
+            source (string): The LOX source code to run
+        """
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
 
-    for token in tokens:
-        print(token)
+        for token in tokens:
+            print(token)
 
 
 class LoxScanner:
@@ -71,6 +79,10 @@ class LoxScanner:
         """
         """
         return self.tokens
+
+
+def error(line: int, message: str):
+    print(f"[line: {line}]: Error {message}")
 
 
 class LoxToken:
@@ -90,9 +102,10 @@ if __name__ == "__main__":
     pylox [script.lox]
     """
     import sys
+    interpreter = LoxIntepreter()
     if len(sys.argv) == 1:
-        _run_prompt()
+        interpreter._run_prompt()
     elif len(sys.argv) == 2:
-        run_file(file=sys.argv[1])
+        interpreter.run_file(file=sys.argv[1])
     else:
         raise LoxException(USAGE)

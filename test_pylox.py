@@ -1,11 +1,15 @@
 import pytest
 
-import pylox
+from pylox import LoxIntepreter, LoxException
 
 
-def test_can_run_with_file():
-    pylox.run_file(file="test_script.lox")
+@pytest.fixture(name="interpreter")
+def _interpreter():
+    yield LoxIntepreter()
 
-def test_raises_on_non_existent_file():
-    with pytest.raises(pylox.LoxException):
-        pylox.run_file(file="non_existent.lox")
+def test_can_run_with_file(interpreter):
+    interpreter.run_file(file="test_script.lox")
+
+def test_raises_on_non_existent_file(interpreter):
+    with pytest.raises(LoxException):
+        interpreter.run_file(file="non_existent.lox")
