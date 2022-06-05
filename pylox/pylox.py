@@ -1,6 +1,6 @@
 import pathlib
 
-
+from .tokens import TokenType
 LOGO = r"""
   _     _____  __
  | |   / _ \ \/ /
@@ -54,6 +54,8 @@ class LoxIntepreter:
         """
         with open(file, "r") as sourcefile:
             source = sourcefile.read()
+        if self.had_error:
+            sys.exit(1)
         self.run(source=source)
 
     def run(self, source):
@@ -84,18 +86,21 @@ class LoxScanner:
 def error(line: int, message: str):
     print(f"[line: {line}]: Error {message}")
 
-
 class LoxToken:
-
-    def __init__(self, type_, value):
+    
+    def __init__(self, type_: TokenType, lexeme: str, literal: str, line: int):
         self.type = type_
-        self.value = value
+        self.lexeme = lexeme
+        self.literal = literal
+        self.line = line
 
     def __str__(self):
         return self.__repr__()
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(type_={self.type}, value={self.value})"
+        return f"{self.__class__.__name__}(type={self.type}, lexeme={self.lexeme}, literal={self.literal}, line={self.line})"
+
+
 
 if __name__ == "__main__":
     USAGE = """
