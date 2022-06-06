@@ -2,7 +2,7 @@
 import pytest
 
 from pylox.scanner import LoxScanner, LoxToken, UnterminatedLine
-from pylox.scanner import TokenType, is_digit
+from pylox.scanner import TokenType, is_digit, is_alpha
 
 def test_scans_empty():
     source = ""
@@ -258,6 +258,16 @@ class TestIsDigit:
         digits = map(str, list(range(10)))
         for item in digits:
             assert is_digit(str(item))
+
+
+class TestIsAlpha:
+    
+    def test_is_alpha(self):
+        ordering_lower = list(range(97, 123))
+        ordering_higher = list(range(65, 91))
+        chars = [chr(a) for a in ordering_lower + ordering_higher] + ['_']
+        for item in chars:
+            assert is_alpha(item)
 
 
 # def test_scans_identifiers():

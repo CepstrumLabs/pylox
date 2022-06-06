@@ -6,6 +6,9 @@ def error(line: int, message: str):
 def is_digit(char):
     return '0' <= char <= '9'
 
+def is_alpha(char):
+    return ('a' <= char <= 'z') or ('A' <= char <= 'Z') or (char == '_')
+
 class TokenNotRecognised(Exception):
     pass
 
@@ -114,6 +117,8 @@ class LoxScanner:
             self.string()
         elif is_digit(char):
             self.number()
+        elif is_alpha(char):
+            self.identifier()
         else:
             error(self._line, f"Token at {self._current} not recognised")
             raise TokenNotRecognised("Line %s offset %s token  not recognised: %s" % (self._line, self._current, self.source[self._current - 1]))
