@@ -8,7 +8,6 @@ def test_scans_empty():
     tokens = scanner.scan_tokens()
     assert tokens == []
 
-
 def test_scans_plus():
     source = "+"
     scanner = LoxScanner(source=source)
@@ -86,3 +85,59 @@ def test_scans_star():
     scanner = LoxScanner(source=source)
     tokens = scanner.scan_tokens()
     assert tokens == [LoxToken(type_=TokenType.STAR, lexeme='*', literal=None, line=1)]
+
+def test_scans_equal():
+    source = "="
+    scanner = LoxScanner(source=source)
+    tokens = scanner.scan_tokens()
+    assert tokens == [LoxToken(type_=TokenType.EQUAL, lexeme='=', literal=None, line=1)]
+
+def test_scans_bang():
+    source = "!"
+    scanner = LoxScanner(source=source)
+    tokens = scanner.scan_tokens()
+    assert tokens == [LoxToken(type_=TokenType.BANG, lexeme='!', literal=None, line=1)]
+
+def test_scans_bang_equal():
+    source = "!="
+    scanner = LoxScanner(source=source)
+    tokens = scanner.scan_tokens()
+    assert tokens == [LoxToken(type_=TokenType.BANG_EQUAL, lexeme='!=', literal=None, line=1)]
+
+def test_scans_equal_equal():
+    source = "=="
+    scanner = LoxScanner(source=source)
+    tokens = scanner.scan_tokens()
+    assert tokens == [LoxToken(type_=TokenType.EQUAL_EQUAL, lexeme='==', literal=None, line=1)]
+
+def test_scans_less():
+    source = "<"
+    scanner = LoxScanner(source=source)
+    tokens = scanner.scan_tokens()
+    assert tokens == [LoxToken(type_=TokenType.LESS, lexeme='<', literal=None, line=1)]
+
+def test_scans_greater():
+    source = ">"
+    scanner = LoxScanner(source=source)
+    tokens = scanner.scan_tokens()
+    assert tokens == [LoxToken(type_=TokenType.GREATER, lexeme='>', literal=None, line=1)]
+
+def test_scans_less_equal():
+    source = "<="
+    scanner = LoxScanner(source=source)
+    tokens = scanner.scan_tokens()
+    assert tokens == [LoxToken(type_=TokenType.LESS_EQUAL, lexeme='<=', literal=None, line=1)]
+
+def test_scans_greater_equal():
+    source = ">="
+    scanner = LoxScanner(source=source)
+    tokens = scanner.scan_tokens()
+    assert tokens == [LoxToken(type_=TokenType.GREATER_EQUAL, lexeme='>=', literal=None, line=1)]
+
+
+
+def test_scans_comment():
+    source = "//"
+    scanner = LoxScanner(source=source)
+    tokens = scanner.scan_tokens()
+    assert tokens == []

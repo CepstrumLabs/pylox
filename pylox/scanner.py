@@ -81,6 +81,8 @@ class LoxScanner:
             self.add_token(TokenType.PLUS)
         elif char == ";":
             self.add_token(TokenType.SEMICOLON)
+        elif char == "*":
+            self.add_token(TokenType.STAR)
         elif char == "/":
             if self.match(expected="/"):
                 # We matched a comment
@@ -88,8 +90,6 @@ class LoxScanner:
                     self.advance()
             else:
                 self.add_token(TokenType.SLASH)
-        elif char == "*":
-                self.add_token(TokenType.STAR)
         
         # 1-2 char tokens
         elif char == "!":
