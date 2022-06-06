@@ -134,10 +134,38 @@ def test_scans_greater_equal():
     tokens = scanner.scan_tokens()
     assert tokens == [LoxToken(type_=TokenType.GREATER_EQUAL, lexeme='>=', literal=None, line=1)]
 
-
-
-def test_scans_comment():
-    source = "//"
+def test_scans_whitespace():
+    source = " "
     scanner = LoxScanner(source=source)
     tokens = scanner.scan_tokens()
     assert tokens == []
+
+def test_scans_comment():
+    source = "// This is a comment\n<"
+    scanner = LoxScanner(source=source)
+    tokens = scanner.scan_tokens()
+    assert tokens == [LoxToken(type_=TokenType.LESS, lexeme='<', literal=None, line=2)]
+
+# def test_scans_string():
+#     source = '"string"'
+#     scanner = LoxScanner(source=source)
+#     tokens = scanner.scan_tokens()
+#     assert tokens == [LoxToken(type_=TokenType.STRING, lexeme='string', literal='string', line=1)]
+
+# def test_scans_numbers():
+#     source = 'number'
+#     scanner = LoxScanner(source=source)
+#     tokens = scanner.scan_tokens()
+#     assert tokens == [LoxToken(type_=TokenType.NUMBER, lexeme='string', literal='string', line=1)]
+
+# def test_scans_identifiers():
+#     source = 'identifier'
+#     scanner = LoxScanner(source=source)
+#     tokens = scanner.scan_tokens()
+#     assert tokens == [LoxToken(type_=TokenType.STRING, lexeme='string', literal='string', line=1)]
+
+# def test_scans_keywords():
+#     source = 'keywords'
+#     scanner = LoxScanner(source=source)
+#     tokens = scanner.scan_tokens()
+#     assert tokens == [LoxToken(type_=TokenType.STRING, lexeme='string', literal='string', line=1)]

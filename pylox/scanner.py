@@ -3,6 +3,10 @@ from pylox.tokens import TokenType
 def error(line: int, message: str):
     print(f"[line: {line}]: Error {message}")
 
+class TokenNotRecognised(Exception):
+    pass
+
+
 class LoxToken:
     
     def __init__(self, type_: TokenType, lexeme: str, literal: str, line: int):
@@ -100,8 +104,15 @@ class LoxScanner:
             self.add_token(TokenType.LESS_EQUAL if self.match(expected="=") else TokenType.LESS)    
         elif char == ">":
             self.add_token(TokenType.GREATER_EQUAL if self.match(expected="=") else TokenType.GREATER)
+        elif char in {" ", "\t", "\r"}:
+            pass
+        elif char == "\n":
+            self._line += 1
+        # elif  char == '"':
+        #     self.string()
         else:
             error(self._line, f"Token at {self._current} not recognised")
+            raise TokenNotRecognised("Line %s token not recognised: %s" % (self._line, self.source[self._current]))
 
     def peek(self):
         if self.is_at_end(): return '\0';
