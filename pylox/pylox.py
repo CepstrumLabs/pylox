@@ -1,6 +1,7 @@
 import pathlib
 
-from .tokens import TokenType
+
+from pylox.scanner import LoxScanner
 LOGO = r"""
   _     _____  __
  | |   / _ \ \/ /
@@ -40,11 +41,10 @@ class LoxIntepreter:
             if line == "exit()":
                 break
             if not line:
-                break
+                continue
             self.run(source=line)
             # Do not kill all the interactιve session because of one line
             self.had_error = False
-
 
     def _run_file(self, file):
         """Run a file containing LOX source code
@@ -69,38 +69,6 @@ class LoxIntepreter:
 
         for token in tokens:
             print(token)
-
-
-class LoxScanner:
-
-    def __init__(self, source):
-        self.source = source
-        self.tokens = []
-    
-    def scan_tokens(self):
-        """
-        """
-        return self.tokens
-
-
-def error(line: int, message: str):
-    print(f"[line: {line}]: Error {message}")
-
-class LoxToken:
-    
-    def __init__(self, type_: TokenType, lexeme: str, literal: str, line: int):
-        self.type = type_
-        self.lexeme = lexeme
-        self.literal = literal
-        self.line = line
-
-    def __str__(self):
-        return self.__repr__()
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}(type={self.type}, lexeme={self.lexeme}, literal={self.literal}, line={self.line})"
-
-
 
 if __name__ == "__main__":
     USAGE = """
