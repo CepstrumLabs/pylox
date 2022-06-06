@@ -10,6 +10,9 @@ class LoxToken:
         self.lexeme = lexeme
         self.literal = literal
         self.line = line
+    
+    def __eq__(self, other):
+        return (self.type == other.type) and (self.lexeme == other.lexeme) and (self.literal == other.literal) and (self.line == other.line)
 
     def __str__(self):
         return self.__repr__()
@@ -79,7 +82,12 @@ class LoxScanner:
         elif char == ";":
             self.add_token(TokenType.MINUS)
         elif char == "/":
-            self.add_token(TokenType.SLASH)
+            if self.match(expected="/"):
+                # We matched a comment
+                while self.peek() != "\n" and not self.is_at_end():
+                    self.advance()
+            else:
+                self.add_token(TokenType.SLASH)
         elif char == "*":
                 self.add_token(TokenType.STAR)
         
@@ -94,6 +102,11 @@ class LoxScanner:
             self.add_token(TokenType.GREATER_EQUAL if self.match(expected="=") else TokenType.GREATER)
         else:
             error(self._line, f"Token at {self._current} not recognised")
+
+    def peek(self):
+        if self.is_at_end(): return '\0';
+        return self.source[self._current]
+
 
     def match(self, expected):
         """Return true if the current character matches
