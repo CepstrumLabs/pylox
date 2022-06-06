@@ -146,6 +146,21 @@ def test_scans_comment():
     tokens = scanner.scan_tokens()
     assert tokens == [LoxToken(type_=TokenType.LESS, lexeme='<', literal=None, line=2)]
 
+def test_scans_grouping():
+    source = "((()))[]"
+    scanner = LoxScanner(source=source)
+    tokens = scanner.scan_tokens()
+    assert tokens == [
+        LoxToken(type_=TokenType.LEFT_PAREN, lexeme='(', literal=None, line=1),
+        LoxToken(type_=TokenType.LEFT_PAREN, lexeme='(', literal=None, line=1),
+        LoxToken(type_=TokenType.LEFT_PAREN, lexeme='(', literal=None, line=1),
+        LoxToken(type_=TokenType.RIGHT_PAREN, lexeme=')', literal=None, line=1),
+        LoxToken(type_=TokenType.RIGHT_PAREN, lexeme=')', literal=None, line=1),
+        LoxToken(type_=TokenType.RIGHT_PAREN, lexeme=')', literal=None, line=1),
+        LoxToken(type_=TokenType.LEFT_BRACE, lexeme='[', literal=None, line=1),
+        LoxToken(type_=TokenType.RIGHT_BRACE, lexeme=']', literal=None, line=1)
+    ]
+
 # def test_scans_string():
 #     source = '"string"'
 #     scanner = LoxScanner(source=source)
