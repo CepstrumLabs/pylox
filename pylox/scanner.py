@@ -40,9 +40,6 @@ class LoxScanner:
         self._current = 0;
         self._line = 1;
 
-    def is_at_end(self):
-        return self._current >= len(self.source)
-
     def scan_tokens(self):
         """
         Main interpreter loop
@@ -137,12 +134,33 @@ class LoxScanner:
         self._add_token(type_=TokenType.STRING, literal=value)
 
     def number(self):
-        pass
+        _is_float = False
+        while is_digit(self.peek()):
+            self.advance()
+
+        if self.peek() == "." and is_digit(self.peek_next()):
+            _is_float = True
+            self.advance()
+            # Fractional part
+            while is_digit(self.peek()):
+                self.advance()
+        if _is_float:
+            value =  float(self.source[self._start: self._current])
+        else:
+            value = int(self.source[self._start: self._current])
+        
+        self._add_token(type_=TokenType.NUMBER, literal=value)
+
+    def is_at_end(self):
+        return self._current >= len(self.source)
 
     def peek(self):
         if self.is_at_end(): return '\0';
         return self.source[self._current]
 
+    def peek_next(self):
+        if self._current + 1 >= len(self.source): return '\0';
+        return self.source[self._current + 1]
 
     def match(self, expected):
         """Return true if the current character matches

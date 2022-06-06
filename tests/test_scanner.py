@@ -178,33 +178,84 @@ def test_scans_operators():
         LoxToken(type_=TokenType.SEMICOLON, lexeme=';', literal=None, line=1)
     ]
 
-def test_scans_string():
-    source = '"a"'
-    scanner = LoxScanner(source=source)
-    tokens = scanner.scan_tokens()
-    assert tokens == [LoxToken(type_=TokenType.STRING, lexeme='"a"', literal='a', line=1)]
+class TestScannerString:
 
+    def test_scans_string(self):
+        source = '"a"'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.STRING, lexeme='"a"', literal='a', line=1)]
 
-def test_raises_on_unterminated_string():
-    source = '"a'
-    scanner = LoxScanner(source=source)
-    with pytest.raises(UnterminatedLine):
-        scanner.scan_tokens()
+    def test_scans_two_char_string(self):
+        source = '"ab"'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.STRING, lexeme='"ab"', literal='ab', line=1)]
+
+    def test_scans_three_char_string(self):
+        source = '"abc"'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.STRING, lexeme='"abc"', literal='abc', line=1)]
+
+    def test_scans_multichar_string(self):
+        source = '"A string with multiple characters inside"'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.STRING, lexeme='"A string with multiple characters inside"', literal='A string with multiple characters inside', line=1)]
+
+    def test_raises_on_unterminated_string(self):
+        source = '"a'
+        scanner = LoxScanner(source=source)
+        with pytest.raises(UnterminatedLine):
+            scanner.scan_tokens()
 
 class TestScannerNumbers:
     
-    def test_scans_numbers(self):
+    def test_scans_single_digits(self):
         source = '5'
         scanner = LoxScanner(source=source)
         tokens = scanner.scan_tokens()
-        assert tokens == [LoxToken(type_=TokenType.NUMBER, lexeme='string', literal='string', line=1)]
+        assert tokens == [LoxToken(type_=TokenType.NUMBER, lexeme='5', literal=5, line=1)]
 
+    def test_scans_double_digits(self):
+        source = '55'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.NUMBER, lexeme='55', literal=55, line=1)]
+    
+    def test_scans_triple_digits(self):
+        source = '555'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.NUMBER, lexeme='555', literal=555, line=1)]
+    
+    def test_scans_multiple_digits(self):
+        source = '1234567890'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.NUMBER, lexeme='1234567890', literal=1234567890, line=1)]
+
+    def test_scans_fractions(self):
+        source = '123.121'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.NUMBER, lexeme='123.121', literal=123.121, line=1)]
+
+    def test_dot_without_decimal_part_not_allowed(self):
+        source = '123.'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [
+            LoxToken(type_=TokenType.NUMBER, lexeme='123', literal=123, line=1),
+            LoxToken(type_=TokenType.DOT, lexeme='.', literal=None, line=1)
+        ]
 
 
 class TestIsDigit:
 
     def test_is_digit(self):
-        digits = list(range(10))
+        digits = map(str, list(range(10)))
         for item in digits:
             assert is_digit(str(item))
 
