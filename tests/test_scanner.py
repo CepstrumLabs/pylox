@@ -161,6 +161,21 @@ def test_scans_grouping():
         LoxToken(type_=TokenType.RIGHT_BRACE, lexeme=']', literal=None, line=1)
     ]
 
+def test_scans_operators():
+    source = "+-=<>/*;"
+    scanner = LoxScanner(source=source)
+    tokens = scanner.scan_tokens()
+    assert tokens == [
+        LoxToken(type_=TokenType.PLUS, lexeme='+', literal=None, line=1),
+        LoxToken(type_=TokenType.MINUS, lexeme='-', literal=None, line=1),
+        LoxToken(type_=TokenType.EQUAL, lexeme='=', literal=None, line=1),
+        LoxToken(type_=TokenType.LESS, lexeme='<', literal=None, line=1),
+        LoxToken(type_=TokenType.GREATER, lexeme='>', literal=None, line=1),
+        LoxToken(type_=TokenType.SLASH, lexeme='/', literal=None, line=1),
+        LoxToken(type_=TokenType.STAR, lexeme='*', literal=None, line=1),
+        LoxToken(type_=TokenType.SEMICOLON, lexeme=';', literal=None, line=1)
+    ]
+
 # def test_scans_string():
 #     source = '"string"'
 #     scanner = LoxScanner(source=source)
