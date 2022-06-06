@@ -80,7 +80,7 @@ class LoxScanner:
         elif char == "+":
             self.add_token(TokenType.PLUS)
         elif char == ";":
-            self.add_token(TokenType.MINUS)
+            self.add_token(TokenType.SEMICOLON)
         elif char == "/":
             if self.match(expected="/"):
                 # We matched a comment
