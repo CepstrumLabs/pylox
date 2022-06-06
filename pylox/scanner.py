@@ -3,9 +3,14 @@ from pylox.tokens import TokenType
 def error(line: int, message: str):
     print(f"[line: {line}]: Error {message}")
 
+def is_digit(char):
+    return '0' <= char <= '9'
+
 class TokenNotRecognised(Exception):
     pass
 
+class UnterminatedLine(Exception):
+    pass
 
 class LoxToken:
     
@@ -108,11 +113,31 @@ class LoxScanner:
             pass
         elif char == "\n":
             self._line += 1
-        # elif  char == '"':
-        #     self.string()
+        elif  char == '"':
+            self.string()
+        elif is_digit(char):
+            self.number()
         else:
             error(self._line, f"Token at {self._current} not recognised")
-            raise TokenNotRecognised("Line %s token not recognised: %s" % (self._line, self.source[self._current]))
+            raise TokenNotRecognised("Line %s offset %s token  not recognised: %s" % (self._line, self._current, self.source[self._current - 1]))
+
+    def string(self):
+        while self.peek() != '"' and not self.is_at_end():
+            if self.peek() == "\n": self._line += 1
+            self.advance()
+
+        if self.is_at_end():
+            error(line=self._line, message="No matching '\"' found ")
+            raise UnterminatedLine()
+
+        self.advance()
+
+        value = self.source[self._start + 1: self._current - 1]
+        
+        self._add_token(type_=TokenType.STRING, literal=value)
+
+    def number(self):
+        pass
 
     def peek(self):
         if self.is_at_end(): return '\0';

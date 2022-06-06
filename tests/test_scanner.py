@@ -1,6 +1,8 @@
-from tokenize import Token
-from pylox.scanner import LoxScanner, LoxToken
-from pylox.scanner import TokenType
+
+import pytest
+
+from pylox.scanner import LoxScanner, LoxToken, UnterminatedLine
+from pylox.scanner import TokenType, is_digit
 
 def test_scans_empty():
     source = ""
@@ -176,17 +178,36 @@ def test_scans_operators():
         LoxToken(type_=TokenType.SEMICOLON, lexeme=';', literal=None, line=1)
     ]
 
-# def test_scans_string():
-#     source = '"string"'
-#     scanner = LoxScanner(source=source)
-#     tokens = scanner.scan_tokens()
-#     assert tokens == [LoxToken(type_=TokenType.STRING, lexeme='string', literal='string', line=1)]
+def test_scans_string():
+    source = '"a"'
+    scanner = LoxScanner(source=source)
+    tokens = scanner.scan_tokens()
+    assert tokens == [LoxToken(type_=TokenType.STRING, lexeme='"a"', literal='a', line=1)]
 
-# def test_scans_numbers():
-#     source = 'number'
-#     scanner = LoxScanner(source=source)
-#     tokens = scanner.scan_tokens()
-#     assert tokens == [LoxToken(type_=TokenType.NUMBER, lexeme='string', literal='string', line=1)]
+
+def test_raises_on_unterminated_string():
+    source = '"a'
+    scanner = LoxScanner(source=source)
+    with pytest.raises(UnterminatedLine):
+        scanner.scan_tokens()
+
+class TestScannerNumbers:
+    
+    def test_scans_numbers(self):
+        source = '5'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.NUMBER, lexeme='string', literal='string', line=1)]
+
+
+
+class TestIsDigit:
+
+    def test_is_digit(self):
+        digits = list(range(10))
+        for item in digits:
+            assert is_digit(str(item))
+
 
 # def test_scans_identifiers():
 #     source = 'identifier'
