@@ -9,6 +9,9 @@ def is_digit(char):
 def is_alpha(char):
     return ('a' <= char <= 'z') or ('A' <= char <= 'Z') or (char == '_')
 
+def is_alphanumeric(char):
+    return is_digit(char) or is_alpha(char)
+
 class TokenNotRecognised(Exception):
     pass
 
@@ -122,6 +125,13 @@ class LoxScanner:
         else:
             error(self._line, f"Token at {self._current} not recognised")
             raise TokenNotRecognised("Line %s offset %s token  not recognised: %s" % (self._line, self._current, self.source[self._current - 1]))
+
+    def identifier(self):
+        while is_alphanumeric(self.peek()): self.advance()
+        value = self.source[self._start: self._current]
+        token_type = TokenType.KEYWORDS.get(value)
+        if not token_type: token_type = TokenType.IDENTIFIER
+        self.add_token(token_type)
 
     def string(self):
         while self.peek() != '"' and not self.is_at_end():

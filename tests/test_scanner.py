@@ -270,14 +270,123 @@ class TestIsAlpha:
             assert is_alpha(item)
 
 
-# def test_scans_identifiers():
-#     source = 'identifier'
-#     scanner = LoxScanner(source=source)
-#     tokens = scanner.scan_tokens()
-#     assert tokens == [LoxToken(type_=TokenType.STRING, lexeme='string', literal='string', line=1)]
+def test_scans_identifiers():
+    source = 'identifier'
+    scanner = LoxScanner(source=source)
+    tokens = scanner.scan_tokens()
+    assert tokens == [LoxToken(type_=TokenType.IDENTIFIER, lexeme='identifier', literal=None, line=1)]
 
-# def test_scans_keywords():
-#     source = 'keywords'
-#     scanner = LoxScanner(source=source)
-#     tokens = scanner.scan_tokens()
-#     assert tokens == [LoxToken(type_=TokenType.STRING, lexeme='string', literal='string', line=1)]
+class TestKeywords:
+    def test_scans_class():
+        source = 'class'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.CLASS, lexeme='class', literal=None, line=1)]
+    
+    def test_scans_and(self):
+        source = 'and'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.AND, lexeme='and', literal=None, line=1)]
+
+    def test_scans_class(self):
+        source = 'class'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.CLASS, lexeme='class', literal=None, line=1)]
+
+    def test_scans_else(self):
+        source = 'else'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.ELSE, lexeme='else', literal=None, line=1)]
+
+    def test_scans_false(self):
+        source = 'false'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.FALSE, lexeme='false', literal=None, line=1)]
+
+    def test_scans_if(self):
+        source = 'if'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.IF, lexeme='if', literal=None, line=1)]
+
+    def test_scans_fun(self):
+        source = 'fun'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.FUN, lexeme='fun', literal=None, line=1)]
+
+    def test_scans_for(self):
+        source = 'for'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.FOR, lexeme='for', literal=None, line=1)]
+
+    def test_scans_if(self):
+        source = 'if'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.IF, lexeme='if', literal=None, line=1)]
+
+    def test_scans_nil(self):
+        source = 'nil'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.NIL, lexeme='nil', literal=None, line=1)]
+
+    def test_scans_or(self):
+        source = 'or'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.OR, lexeme='or', literal=None, line=1)]
+
+    def test_scans_print(self):
+        source = 'print'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.PRINT, lexeme='print', literal=None, line=1)]
+
+    def test_scans_return(self):
+        source = 'return'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.RETURN, lexeme='return', literal=None, line=1)]
+
+    def test_scans_super(self):
+        source = 'super'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.SUPER, lexeme='super', literal=None, line=1)]
+
+    def test_scans_this(self):
+        source = 'this'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.THIS, lexeme='this', literal=None, line=1)]
+
+    def test_scans_true(self):
+        source = 'true'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.TRUE, lexeme='true', literal=None, line=1)]
+
+    def test_scans_var(self):
+        source = 'var'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.VAR, lexeme='var', literal=None, line=1)]
+
+    def test_scans_while(self):
+        source = 'while'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.WHILE, lexeme='while', literal=None, line=1)]
+
+    def test_scans_eof(self):
+        source = 'eof'
+        scanner = LoxScanner(source=source)
+        tokens = scanner.scan_tokens()
+        assert tokens == [LoxToken(type_=TokenType.EOF, lexeme='eof', literal=None, line=1)]

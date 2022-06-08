@@ -28,7 +28,6 @@ class TokenType:
     STRING = "STRING"
     NUMBER = "NUMBER"
 
-    # Keywords
     AND = "AND"
     CLASS = "CLASS"
     ELSE = "ELSE"
@@ -47,3 +46,26 @@ class TokenType:
     VAR = "VAR"
     WHILE = "WHILE"
     EOF = "EOF"
+
+    KEYWORDS = {
+        "and": AND ,
+        "class": CLASS ,
+        "else": ELSE ,
+        "false": FALSE ,
+        "if": IF ,
+        "fun": FUN ,
+        "for": FOR ,
+        "if": IF ,
+        "nil": NIL ,
+        "or": OR ,
+        "print": PRINT ,
+        "return": RETURN ,
+        "super": SUPER ,
+        "this": THIS ,
+        "true": TRUE ,
+        "var": VAR ,
+        "while": WHILE ,
+        "eof": EOF ,
+    }
+
+    
