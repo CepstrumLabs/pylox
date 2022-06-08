@@ -290,6 +290,16 @@ def test_scans_identifiers():
     tokens = scanner.scan_tokens()
     assert tokens == [LoxToken(type_=TokenType.IDENTIFIER, lexeme='identifier', literal=None, line=1)]
 
+def test_scans_identifier_ando():
+    """
+    Ensure identifiers are scanned as expected
+    """
+    source = 'ando'
+    scanner = LoxScanner(source=source)
+    tokens = scanner.scan_tokens()
+    assert tokens == [LoxToken(type_=TokenType.IDENTIFIER, lexeme='ando', literal=None, line=1)]
+
+
 class TestKeywords:
     """
     Ensure that keywords are scanned as expected
