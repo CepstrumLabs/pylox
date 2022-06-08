@@ -179,7 +179,9 @@ def test_scans_operators():
     ]
 
 class TestScannerString:
-
+    """
+    Ensure strings are scanned as expected
+    """
     def test_scans_string(self):
         source = '"a"'
         scanner = LoxScanner(source=source)
@@ -211,6 +213,9 @@ class TestScannerString:
             scanner.scan_tokens()
 
 class TestScannerNumbers:
+    """
+    Ensure numbers are scanned as expected
+    """
     
     def test_scans_single_digits(self):
         source = '5'
@@ -255,6 +260,9 @@ class TestScannerNumbers:
 class TestIsDigit:
 
     def test_is_digit(self):
+        """
+        Ensure that is_digit recognises digits
+        """
         digits = map(str, list(range(10)))
         for item in digits:
             assert is_digit(str(item))
@@ -263,6 +271,9 @@ class TestIsDigit:
 class TestIsAlpha:
     
     def test_is_alpha(self):
+        """
+        Ensure that is_alpha recognizes all characters and the underscore
+        """
         ordering_lower = list(range(97, 123))
         ordering_higher = list(range(65, 91))
         chars = [chr(a) for a in ordering_lower + ordering_higher] + ['_']
@@ -271,12 +282,18 @@ class TestIsAlpha:
 
 
 def test_scans_identifiers():
+    """
+    Ensure identifiers are scanned as expected
+    """
     source = 'identifier'
     scanner = LoxScanner(source=source)
     tokens = scanner.scan_tokens()
     assert tokens == [LoxToken(type_=TokenType.IDENTIFIER, lexeme='identifier', literal=None, line=1)]
 
 class TestKeywords:
+    """
+    Ensure that keywords are scanned as expected
+    """
     def test_scans_class():
         source = 'class'
         scanner = LoxScanner(source=source)
