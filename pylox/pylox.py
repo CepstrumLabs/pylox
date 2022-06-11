@@ -1,7 +1,7 @@
 import pathlib
 
 
-from pylox.scanner import LoxScanner
+from scanner import LoxScanner
 LOGO = r"""
   _     _____  __
  | |   / _ \ \/ /
