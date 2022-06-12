@@ -19,7 +19,7 @@ def create_token(type_, line=1):
     return LoxToken(type_=type_, lexeme=lexeme, literal=None, line=line)
 
 def create_literal(value):
-    return Literal(value=str(value))
+    return Literal(value=value)
 
 
 class TestParser:
