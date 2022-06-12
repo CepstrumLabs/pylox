@@ -30,6 +30,13 @@ class Parser:
     factor -> unary ( ("*" | "/") unary)* ;
     unary ->("!" | "-") unary | primary ;
     primary -> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ; 
+
+
+    '''
+    A parser has two responsibilities:
+    a) Given a valid sequence of tokens, produce a corresponding syntaxt tree
+    b) Given an invalid sequence of tokens, detect any errors and tell the user about it
+    '''
     """
     def __init__(self, tokens: List[LoxToken]):
         self._tokens = tokens

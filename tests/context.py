@@ -4,3 +4,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 import pylox
 
+from pylox.Expr import Literal
+from pylox.Expr import Binary
+
+
+
+
