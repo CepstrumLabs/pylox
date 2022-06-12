@@ -3,6 +3,7 @@ from typing import List
 from pylox.expr import Binary, Grouping, Literal, Unary
 from pylox.scanner import LoxToken, error
 from pylox.tokens import TokenType
+from pylox.stmt import Expression, Print
 
 
 class ParserError(Exception):
@@ -41,10 +42,32 @@ class Parser:
         self.line = 0
 
     def parse(self):
+        statements = []
         try:
-            return self.expression()
+            while not (self.is_at_end()):
+                statements.append(self.statement())
+            return statements
         except ParserError as e:
+            error(self.line, message="Encountered parse error")
             return None
+
+    def statement(self):
+        if self.match(TokenType.PRINT):
+            return self.print_statement()
+        return self.expression_statement()
+
+    def print_statement(self):
+        expr = self.expression()
+        self.consume(type_=TokenType.SEMICOLON, msg="Expect ';' after value")
+
+        return Print(expression=expr)
+
+    def expression_statement(self):
+        expr = self.expression()
+        self.consume(type_=TokenType.SEMICOLON, msg="Expect ';' after expression")
+
+        return Expression(expression=expr)
+
 
     def expression(self):
         return self.equality()
@@ -165,7 +188,7 @@ class Parser:
 
     def error(self, token, msg):
         if token.type_ == TokenType.EOF:
-            raise ParserError(error(token.line, message=" at end" + msg))
+            raise ParserError(error(token.line, message=" at end\n" + msg))
         else:
             raise ParserError(
                 error(token.line, message=f"at token {token.lexeme} " + msg)

@@ -120,6 +120,14 @@ def generate_ast(directory):
 
     define_ast(output_dir=output_dir, base_name=base_name, types=TYPES)
 
+    base_name = "Stmt"
+    TYPES = [
+        "Expression: Expr expression",
+        "Print: Expr expression"
+    ]
+
+    define_ast(output_dir=output_dir, base_name=base_name, types=TYPES)
+
 
 if __name__ == "__main__":
     import argparse

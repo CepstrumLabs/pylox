@@ -1,3 +1,5 @@
+from typing import List
+
 from pylox.expr_visitor import Expr, Visitor
 from pylox.tokens import TokenType
 
@@ -43,10 +45,10 @@ def _runtime_error(msg, line):
 
 
 class ExpressionInterpreter(Visitor):
-    def visitLiteralExpr(self, expr: "Expr"):
+    def visit_literal_expr(self, expr: "Expr"):
         return expr.value
 
-    def visitBinaryExpr(self, expr: "Expr"):
+    def visit_binary_expr(self, expr: "Expr"):
         left = self.evaluate(expr.left)
         right = self.evaluate(expr.right)
 
@@ -83,7 +85,7 @@ class ExpressionInterpreter(Visitor):
         if operator.type_ == TokenType.LESS_EQUAL:
             return left <= right
 
-    def visitUnaryExpr(self, expr: "Expr"):
+    def visit_unary_expr(self, expr: "Expr"):
         operator = expr.operator
         right = self.evaluate(expr.right)
 
@@ -94,17 +96,26 @@ class ExpressionInterpreter(Visitor):
             _checkNumberOperand(operator=operator, operand=right)
             return -(float(right))
 
-    def visitGroupingExpr(self, expr: "Expr"):
+    def visit_grouping_expr(self, expr: "Expr"):
         return self.evaluate(expr.expression)
+
+    def visit_print_stmt(self, stmt: "Stmt"):
+        expr = self.evaluate(stmt.expression)
+        print(expr)
+        return None
+    
+    def visit_expression_stmt(self, stmt: "Stmt"):
+        self.evaluate(stmt.expression)
 
     def evaluate(self, expr: "Expr"):
         return expr.accept(self)
 
-    def interpret(self, expr: "Expr"):
+    def interpret(self, statements: List['Stmt']):
         try:
-            return self.evaluate(expr)
+            for statement in statements:
+                self._execute(statement)
         except LoxRuntimeError as error:
             _runtime_error(error.msg, error.token.line)
-
-        except Exception:
-            _runtime_error("Uknown exception occured", None)
+    
+    def _execute(self, statement):
+        return statement.accept(self)

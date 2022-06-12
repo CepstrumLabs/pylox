@@ -71,7 +71,7 @@ class LoxIntepreter:
         scanner = LoxScanner(source=source)
         tokens = scanner.scan_tokens()
         parser = LoxParser(tokens=tokens)
-        expr = parser.parse()
+        statements = parser.parse()
         interpreter = Interpreter()
-        result = interpreter.interpret(expr)
+        result = interpreter.interpret(statements)
         return result
