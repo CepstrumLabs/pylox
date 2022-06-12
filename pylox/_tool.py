@@ -43,7 +43,7 @@ def _add_abstract_method(name, class_name):
     return source
 
 def create_abstract_class(name):
-    return f"class {name}:{NEWLINE}{TAB}pass{NEWLINE}{NEWLINE}"
+    return f"class {name}:{NEWLINE}{TAB}{NEWLINE}"
 
 def define_type(parent_class_name, class_name, fields):
     field_defs = [part.split() for part in fields.split(",")]

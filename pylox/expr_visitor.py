@@ -1,6 +1,27 @@
 
 from typing import List
 
+from pylox.expr import Expr
+
+
+class Visitor:
+    """
+    Abstract Visitor class
+    """
+
+    def visitLiteralExpr(self, expr: "Expr"):
+        raise NotImplementedError("Subclasses should implement this method")
+
+    def visitBinaryExpr(self, expr: "Expr"):
+        raise NotImplementedError("Subclasses should implement this method")
+    
+    def visitUnaryExpr(self, expr: "Expr"):
+        raise NotImplementedError("Subclasses should implement this method")
+    
+    def visitGroupingExpr(self, expr: "Expr"):
+        raise NotImplementedError("Subclasses should implement this method")
+
+
 class AstPrinter:
     
     def __init__(self):
@@ -10,7 +31,7 @@ class AstPrinter:
         if expression:
             print(expression.accept(self._visitor))
 
-class ExprVisitor:
+class ExprVisitor(Visitor):
     
     def parenthesize(self, name: str, *exprs: List["Expr"]):
         block = ""
