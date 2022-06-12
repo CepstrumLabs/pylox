@@ -52,16 +52,6 @@ class Grouping(Expression):
         return visitor.visitGroupingExpr(self.expression)
 
 
-
-class AstPrinter():
-
-    def __init__(self):
-        self._visitor = ExprVisitor()
-
-    def print(self, expression):
-        print(expression.accept(self._visitor))
-
-
 def main():
     left = Unary(LoxToken(type_=TokenType.MINUS, lexeme="-", literal=None, line=1), Literal(value=123))
     operator = LoxToken(type_=TokenType.STAR, lexeme="*", literal=None, line=1)
@@ -71,6 +61,7 @@ def main():
     printer.print(expression)
 
 if __name__ == "__main__":
-    from scanner import LoxToken
-    from tokens import TokenType
+    from pylox.scanner import LoxToken
+    from pylox.tokens import TokenType
+    from pylox.expr_visitor import AstPrinter
     main()

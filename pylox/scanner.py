@@ -1,4 +1,4 @@
-from tokens import TokenType
+from pylox.tokens import TokenType
 
 def error(line: int, message: str):
     print(f"[line: {line}]: Error {message}")
@@ -21,19 +21,19 @@ class UnterminatedLine(Exception):
 class LoxToken:
     
     def __init__(self, type_: TokenType, lexeme: str, literal: str, line: int):
-        self.type = type_
+        self.type_ = type_
         self.lexeme = lexeme
         self.literal = literal
         self.line = line
     
     def __eq__(self, other):
-        return (self.type == other.type) and (self.lexeme == other.lexeme) and (self.literal == other.literal) and (self.line == other.line)
+        return (self.type_ == other.type_) and (self.lexeme == other.lexeme) and (self.literal == other.literal) and (self.line == other.line)
 
     def __str__(self):
         return self.__repr__()
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(type={self.type}, lexeme='{self.lexeme}', literal={self.literal}, line={self.line})"
+        return f"{self.__class__.__name__}(type={self.type_}, lexeme='{self.lexeme}', literal={self.literal}, line={self.line})"
 
 
 class LoxScanner:

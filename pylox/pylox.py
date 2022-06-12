@@ -1,7 +1,9 @@
 import pathlib
 
+from pylox.parser import Parser as LoxParser
+from pylox.scanner import LoxScanner
+from pylox.expr_visitor import AstPrinter
 
-from scanner import LoxScanner
 LOGO = r"""
   _     _____  __
  | |   / _ \ \/ /
@@ -66,19 +68,7 @@ class LoxIntepreter:
         """
         scanner = LoxScanner(source=source)
         tokens = scanner.scan_tokens()
+        parser = LoxParser(tokens=tokens)
+        expr = parser.parse()
 
-        for token in tokens:
-            print(token)
-
-if __name__ == "__main__":
-    USAGE = """
-    pylox [script.lox]
-    """
-    import sys
-    interpreter = LoxIntepreter()
-    if len(sys.argv) == 1:
-        interpreter._run_prompt()
-    elif len(sys.argv) == 2:
-        interpreter.run_file(file=sys.argv[1])
-    else:
-        raise LoxException(USAGE)
+        print(AstPrinter().print(expr))

@@ -1,6 +1,13 @@
 
 from typing import List
 
+class AstPrinter:
+    
+    def __init__(self):
+        self._visitor = ExprVisitor()
+
+    def print(self, expression):
+        print(expression.accept(self._visitor))
 
 class ExprVisitor:
     

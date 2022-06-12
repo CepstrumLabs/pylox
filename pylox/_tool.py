@@ -50,7 +50,18 @@ def define_type(parent_class_name, class_name, fields):
     source = f"class {class_name}({parent_class_name}):" + 2 * NEWLINE
     source += _add_init_method(field_defs)
     source += _add_accept_method(parent_class_name, class_name)
+    source += _add_repr_method(class_name, field_defs)
     return source
+
+def _add_repr_method(class_name, field_defs):
+    source = TAB + "def __repr__(self):" + NEWLINE
+    return_line = 2 * TAB + "return f'{%s}(" % "self.__class__.__name__"
+    for field_def in field_defs:
+        return_line += "%s={self.%s}, " % (field_def[1], field_def[1])
+    return_line = return_line[:-2]
+    return_line += ")'"
+    return source + return_line + NEWLINE
+
 
 def _add_init_method(field_defs):
     source = TAB + "def __init__(self, " + ', '.join([f"{field_def[1]}: {field_def[0]}" for  field_def in field_defs]) + "):" + NEWLINE
