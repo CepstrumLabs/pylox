@@ -74,4 +74,4 @@ class LoxIntepreter:
         expr = parser.parse()
         interpreter = Interpreter()
         result = interpreter.interpret(expr)
-        print(result)
+        return result

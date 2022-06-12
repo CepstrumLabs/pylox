@@ -81,7 +81,7 @@ class ExpressionInterpreter(Visitor):
         if operator.type_ == TokenType.LESS:
             return left < right
         if operator.type_ == TokenType.LESS_EQUAL:
-            return left >= right
+            return left <= right
 
     def visitUnaryExpr(self, expr: "Expr"):
         operator = expr.operator
