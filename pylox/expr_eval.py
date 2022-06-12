@@ -1,0 +1,106 @@
+from pylox.expr_visitor import Visitor, Expr
+from pylox.tokens import TokenType
+
+
+class LoxRuntimeError(Exception):
+
+    def __init__(self, token, msg):
+        self.token = token
+        self.msg = msg
+
+def _is_number(value):
+    return isinstance(value, (int, float))
+
+def _checkNumberOperands(operator, left, right):
+    if _is_number(left) and _is_number(right):
+        return
+    raise LoxRuntimeError(f"Operands for {operator.lexeme} should be int or float not {type(left)}")
+
+def _checkNumberOperand(operator, operand):
+    if _is_number(operand):
+        return
+    raise LoxRuntimeError(f"Operand for {operator.lexeme} should be int or float")
+
+
+def _isTruthy(object_):
+    if object_ in ("False", "nil", None):
+        return False
+    if isinstance(object_, bool):
+        return bool(object_)
+    return True
+    
+
+def _isEqual(left, right):
+    return left == right
+
+def _runtime_error(msg, line):
+    print(msg + ' @ [line ' + str(line) + ']')
+
+
+class ExpressionInterpreter(Visitor):
+    
+    def visitLiteralExpr(self, expr: "Expr"):
+        return expr.value
+
+    def visitBinaryExpr(self, expr: "Expr"):
+        left = self.evaluate(expr.left)
+        right = self.evaluate(expr.right)
+
+        operator = expr.operator
+        
+        if operator.type_ == TokenType.PLUS:
+            if isinstance(left, str) and isinstance(right, str):
+                return left + right
+            _checkNumberOperands(operator=operator, left=left, right=right)
+            return float(left) + float(right)
+        if operator.type_ == TokenType.MINUS:
+            _checkNumberOperands(operator=operator, left=left, right=right)
+            return float(left) - float(right)
+        if operator.type_ == TokenType.STAR:
+            _checkNumberOperands(operator=operator, left=left, right=right)
+            return float(left) * float(right)
+        if operator.type_ == TokenType.SLASH:
+            _checkNumberOperands(operator=operator, left=left, right=right)
+            try:
+                rv = float(left) / float(right)
+            except ZeroDivisionError:
+                raise LoxRuntimeError(operator, msg="ZeroDivisionError")
+            return rv
+        if operator.type_ == TokenType.BANG_EQUAL:
+            return not _isEqual(left, right)
+        if operator.type_ == TokenType.EQUAL_EQUAL:
+            return _isEqual(left, right)
+        if operator.type_ == TokenType.GREATER:
+            return (left > right)
+        if operator.type_ == TokenType.GREATER_EQUAL:
+            return (left >= right)
+        if operator.type_ == TokenType.LESS:
+            return (left < right)
+        if operator.type_ == TokenType.LESS_EQUAL:
+            return (left >= right)
+
+    def visitUnaryExpr(self, expr: "Expr"):
+        operator = expr.operator
+        right = self.evaluate(expr.right)
+
+        if operator.type_ == TokenType.BANG:
+            return not _isTruthy(right)
+        
+        if operator.type_ == TokenType.MINUS:
+            _checkNumberOperand(operator=operator, operand=right)
+            return -(float(right))
+
+    def visitGroupingExpr(self, expr: "Expr"):
+        return self.evaluate(expr.expression)
+
+    def evaluate(self, expr: "Expr"):
+        return expr.accept(self)
+
+    def interpret(self, expr: "Expr"):
+        try:
+            return self.evaluate(expr)
+        except LoxRuntimeError as error:
+            _runtime_error(error.msg, error.token.line)
+
+        except Exception:
+            _runtime_error("Uknown exception occured", None)

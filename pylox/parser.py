@@ -42,8 +42,8 @@ class Parser:
     def parse(self):
         try:
             return self.expression()
-        except ParserError:
-            return None
+        except ParserError as e:
+           return None
 
     def expression(self):
         return self.equality()
@@ -110,7 +110,7 @@ class Parser:
         if self.match(TokenType.NIL):
             return Literal(value=None)
         if self.match(TokenType.NUMBER, TokenType.STRING):
-            return Literal(value=self._previous().lexeme)
+            return Literal(value=self._previous().literal)
         elif self.match(TokenType.LEFT_PAREN):
             expr = self.expression()
             self.consume(type_=TokenType.RIGHT_PAREN, msg="Expect ')' after left parenthesis");
