@@ -33,4 +33,4 @@ class ExprVisitor:
         return self.parenthesize(expr.operator.lexeme, expr.right)
     
     def visitGroupingExpr(self, expr: "Expr"):
-        return self.parenthesize("group", expr)
+        return self.parenthesize("group", expr.expression)
