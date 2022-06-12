@@ -68,3 +68,14 @@ def test_run_comparison_greater_equal(interpreter):
     source = "3 >= 2;"
     result = interpreter.run(source=source)
     assert result == None
+
+def test_print_statement(interpreter):
+    source = "print 1;"
+    result = interpreter.run(source=source)
+    assert result == None
+
+
+def test_print_statements(interpreter):
+    source = "print 1;\nprint 2;"
+    result = interpreter.run(source=source)
+    assert result == None
