@@ -44,7 +44,7 @@ class Parser:
             return self.expression()
         except ParserError as e:
            return None
-           
+
     def expression(self):
         return self.equality()
     
