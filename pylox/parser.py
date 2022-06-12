@@ -3,12 +3,8 @@ from typing import List
 
 from pylox.scanner import LoxToken, error
 from pylox.tokens import TokenType
-from pylox.Expr import Binary, Grouping, Literal, Unary
+from pylox.expr import Binary, Grouping, Literal, Unary
 
-"""
-Grammar:
-====
-"""
 
 class ParserError(Exception):
     """
