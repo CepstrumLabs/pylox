@@ -103,19 +103,19 @@ class ExpressionInterpreter(Visitor):
         expr = self.evaluate(stmt.expression)
         print(expr)
         return None
-    
+
     def visit_expression_stmt(self, stmt: "Stmt"):
         self.evaluate(stmt.expression)
 
     def evaluate(self, expr: "Expr"):
         return expr.accept(self)
 
-    def interpret(self, statements: List['Stmt']):
+    def interpret(self, statements: List["Stmt"]):
         try:
             for statement in statements:
                 self._execute(statement)
         except LoxRuntimeError as error:
             _runtime_error(error.msg, error.token.line)
-    
+
     def _execute(self, statement):
         return statement.accept(self)

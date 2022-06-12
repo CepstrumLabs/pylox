@@ -68,7 +68,6 @@ class Parser:
 
         return Expression(expression=expr)
 
-
     def expression(self):
         return self.equality()
 
