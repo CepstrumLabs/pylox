@@ -6,7 +6,6 @@ NEWLINE = "\n"
 TAB = "\t"
 
 
-
 class Writer():
     
     def __init__(self, path):
