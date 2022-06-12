@@ -1,4 +1,5 @@
 import pathlib
+import sys
 
 from pylox.parser import Parser as LoxParser
 from pylox.scanner import LoxScanner
@@ -71,4 +72,4 @@ class LoxIntepreter:
         parser = LoxParser(tokens=tokens)
         expr = parser.parse()
 
-        print(AstPrinter().print(expr))
+        AstPrinter().print(expr)

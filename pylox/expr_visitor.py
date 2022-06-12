@@ -19,7 +19,7 @@ class ExprVisitor:
             block += " "
             block += expr.accept(self)
         block += ")"
-        return str(block)
+        return block
 
     def visitLiteralExpr(self, expr: "Expr"):
         if not expr.value:

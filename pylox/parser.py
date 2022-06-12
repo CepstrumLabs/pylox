@@ -40,6 +40,7 @@ class Parser:
             return self.expression()
         except ParserError:
             return None
+
     def expression(self):
         return self.equality()
     
@@ -69,13 +70,14 @@ class Parser:
     
     def term(self):
 
-        left = self.factor()
+        expr = self.factor()
 
         while self.match(TokenType.PLUS, TokenType.MINUS):
             operator = self._previous()
             right = self.factor()
+            expr = Binary(left=expr, operator=operator, right=right)
         
-        return Binary(left=left, operator=operator, right=right)
+        return expr
     
     def factor(self):
     
@@ -96,7 +98,7 @@ class Parser:
             return Unary(operator=operator, right=right)
         
         primary = self.primary()
-        return Literal(value=primary)
+        return primary
 
     def primary(self):
         if self.match(TokenType.TRUE):
@@ -106,7 +108,7 @@ class Parser:
         if self.match(TokenType.NIL):
             return Literal(value=None)
         if self.match(TokenType.NUMBER, TokenType.STRING):
-            return Literal(value=self._previous())
+            return Literal(value=self._previous().lexeme)
         elif self.match(TokenType.LEFT_PAREN):
             expr = self.expression()
             self.consume(type_=TokenType.RIGHT_PAREN, msg="Expect ')' after left parenthesis");
@@ -145,7 +147,7 @@ class Parser:
         return self._previous()
     
     def consume(self, type_, msg):
-        if self.check_(type_):
+        if self._check(type_):
             return self.advance()
         self.error(token=self.peek(), msg=msg)
 
