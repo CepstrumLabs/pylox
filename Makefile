@@ -18,3 +18,5 @@ lint: black isort
 
 test: build_req
 	pytest -svvvv
+
+all: build lint test
