@@ -9,10 +9,10 @@ build: build_req
 	python3 setup.py sdist bdist_wheel
 
 isort:
-	isort --check --verbose pylox
+	isort --check pylox
 
 black:
-	black --check --verbose pylox
+	black --check pylox
 
 lint: black isort
 
