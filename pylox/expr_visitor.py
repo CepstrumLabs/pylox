@@ -7,7 +7,8 @@ class AstPrinter:
         self._visitor = ExprVisitor()
 
     def print(self, expression):
-        print(expression.accept(self._visitor))
+        if expression:
+            print(expression.accept(self._visitor))
 
 class ExprVisitor:
     

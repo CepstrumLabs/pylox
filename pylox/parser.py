@@ -34,6 +34,7 @@ class Parser:
     def __init__(self, tokens: List[LoxToken]):
         self._tokens = tokens
         self.current = 0
+        self.line = 0
 
     def parse(self):
         try:
@@ -65,9 +66,7 @@ class Parser:
             expr = Binary(left=expr, operator=operator, right=right)
         
         return expr
-        
-        
-    
+
     def term(self):
 
         expr = self.factor()
@@ -78,7 +77,7 @@ class Parser:
             expr = Binary(left=expr, operator=operator, right=right)
         
         return expr
-    
+
     def factor(self):
     
         expr = self.unary()
@@ -89,7 +88,7 @@ class Parser:
             expr = Binary(left=expr, operator=operator, right=right)
         
         return expr
-    
+
     def unary(self):
         
         if self.match(TokenType.BANG, TokenType.MINUS):
@@ -116,7 +115,6 @@ class Parser:
         else:
             self.error(self.peek(), msg="Expected expression")
 
-
     def _previous(self):
         return self._tokens[self.current - 1]
 
@@ -139,13 +137,14 @@ class Parser:
         try:
             return self._tokens[self.current]
         except IndexError:
-            return LoxToken(type_=TokenType.EOF, lexeme="\0", literal=None, line=self._previous().line)
+            return LoxToken(type_=TokenType.EOF, lexeme="\0", literal=None, line=self.line)
 
     def advance(self):
         if not self.is_at_end():
             self.current += 1
+            self.line = self.peek().line
         return self._previous()
-    
+
     def consume(self, type_, msg):
         if self._check(type_):
             return self.advance()
@@ -156,13 +155,3 @@ class Parser:
             raise ParserError(error(token.line, message=" at end" + msg))
         else:
             raise ParserError(error(token.line, message=f"at token {token.lexeme} " + msg))
-
-            
-    
-    
-
-
-
-
-
-    
