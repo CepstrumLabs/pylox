@@ -5,6 +5,7 @@ if __name__ == "__main__":
     pylox [script.lox]
     """
     import sys
+
     interpreter = LoxIntepreter()
     if len(sys.argv) == 1:
         interpreter._run_prompt()

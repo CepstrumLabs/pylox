@@ -1,7 +1,5 @@
-
-
 class TokenType:
-    
+
     # Single character tokens
     LEFT_PAREN = "LEFT_PAREN"
     RIGHT_PAREN = "RIGHT_PAREN"
@@ -14,7 +12,7 @@ class TokenType:
     SEMICOLON = "SEMICOLON"
     SLASH = "SLASH"
     STAR = "STAR"
-    
+
     # 1 or 2 character tokens
     BANG = "BANG"
     BANG_EQUAL = "BANG_EQUAL"
@@ -24,7 +22,7 @@ class TokenType:
     GREATER_EQUAL = "GREATER_EQUAL"
     LESS = "LESS"
     LESS_EQUAL = "LESS_EQUAL"
-    
+
     # Literals
     IDENTIFIER = "IDENTIFIER"
     STRING = "STRING"
@@ -50,39 +48,38 @@ class TokenType:
     EOF = "EOF"
 
     KEYWORDS = {
-        "and": AND ,
-        "class": CLASS ,
-        "else": ELSE ,
-        "false": FALSE ,
-        "if": IF ,
-        "fun": FUN ,
-        "for": FOR ,
-        "if": IF ,
-        "nil": NIL ,
-        "or": OR ,
-        "print": PRINT ,
-        "return": RETURN ,
-        "super": SUPER ,
-        "this": THIS ,
-        "true": TRUE ,
-        "var": VAR ,
-        "while": WHILE ,
-        "eof": EOF ,
+        "and": AND,
+        "class": CLASS,
+        "else": ELSE,
+        "false": FALSE,
+        "if": IF,
+        "fun": FUN,
+        "for": FOR,
+        "if": IF,
+        "nil": NIL,
+        "or": OR,
+        "print": PRINT,
+        "return": RETURN,
+        "super": SUPER,
+        "this": THIS,
+        "true": TRUE,
+        "var": VAR,
+        "while": WHILE,
+        "eof": EOF,
     }
 
     TOKENS_TO_LEXEMES = {
         LEFT_PAREN: "(",
         RIGHT_PAREN: ")",
-        LEFT_BRACE:"[",
-        RIGHT_BRACE:"]",
-        COMMA:",",
-        DOT:".",
-        MINUS:"-",
-        PLUS:"+",
+        LEFT_BRACE: "[",
+        RIGHT_BRACE: "]",
+        COMMA: ",",
+        DOT: ".",
+        MINUS: "-",
+        PLUS: "+",
         SEMICOLON: ";",
         SLASH: "/",
         STAR: "*",
-
         BANG: "!",
         BANG_EQUAL: "!=",
         EQUAL: "=",
@@ -91,7 +88,6 @@ class TokenType:
         GREATER_EQUAL: ">=",
         LESS: "<",
         LESS_EQUAL: "<=",
-
         AND: "and",
         CLASS: "class",
         ELSE: "else",
@@ -109,6 +105,5 @@ class TokenType:
         TRUE: "true",
         VAR: "var",
         WHILE: "while",
-        EOF   : "eof" 
-}
-    
+        EOF: "eof",
+    }

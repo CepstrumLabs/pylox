@@ -4,31 +4,41 @@ from pylox.tokens import TokenType
 def error(line: int, message: str):
     print(f"[line: {line}]: Error {message}")
 
+
 def is_digit(char):
-    return '0' <= char <= '9'
+    return "0" <= char <= "9"
+
 
 def is_alpha(char):
-    return ('a' <= char <= 'z') or ('A' <= char <= 'Z') or (char == '_')
+    return ("a" <= char <= "z") or ("A" <= char <= "Z") or (char == "_")
+
 
 def is_alphanumeric(char):
     return is_digit(char) or is_alpha(char)
 
+
 class TokenNotRecognised(Exception):
     pass
+
 
 class UnterminatedLine(Exception):
     pass
 
+
 class LoxToken:
-    
     def __init__(self, type_: TokenType, lexeme: str, literal: str, line: int):
         self.type_ = type_
         self.lexeme = lexeme
         self.literal = literal
         self.line = line
-    
+
     def __eq__(self, other):
-        return (self.type_ == other.type_) and (self.lexeme == other.lexeme) and (self.literal == other.literal) and (self.line == other.line)
+        return (
+            (self.type_ == other.type_)
+            and (self.lexeme == other.lexeme)
+            and (self.literal == other.literal)
+            and (self.line == other.line)
+        )
 
     def __str__(self):
         return self.__repr__()
@@ -38,35 +48,34 @@ class LoxToken:
 
 
 class LoxScanner:
-    
     def __init__(self, source):
         self.source = source
         self.tokens = []
-        
+
         self._start = 0
-        self._current = 0;
-        self._line = 1;
+        self._current = 0
+        self._line = 1
 
     def scan_tokens(self):
         """
         Main interpreter loop
         """
         while not self.is_at_end():
-            self._start = self._current;
+            self._start = self._current
             self.scan_token()
         return self.tokens
 
     def advance(self):
-        char =  self.source[self._current]
+        char = self.source[self._current]
         self._inc_current()
         return char
-    
+
     def add_token(self, type_: str):
         self._add_token(type_=type_, literal=None)
-    
+
     def _add_token(self, type_, literal):
-        text = self.source[self._start: self._current]
-        token = LoxToken(type_=type_, lexeme = text, literal=literal, line=self._line)
+        text = self.source[self._start : self._current]
+        token = LoxToken(type_=type_, lexeme=text, literal=literal, line=self._line)
         self.tokens.append(token)
 
     def scan_token(self):
@@ -103,21 +112,31 @@ class LoxScanner:
                     self.advance()
             else:
                 self.add_token(TokenType.SLASH)
-        
+
         # 1-2 char tokens
         elif char == "!":
-            self.add_token(TokenType.BANG_EQUAL if self.match(expected="=") else TokenType.BANG)
+            self.add_token(
+                TokenType.BANG_EQUAL if self.match(expected="=") else TokenType.BANG
+            )
         elif char == "=":
-            self.add_token(TokenType.EQUAL_EQUAL if self.match(expected="=") else TokenType.EQUAL)
+            self.add_token(
+                TokenType.EQUAL_EQUAL if self.match(expected="=") else TokenType.EQUAL
+            )
         elif char == "<":
-            self.add_token(TokenType.LESS_EQUAL if self.match(expected="=") else TokenType.LESS)    
+            self.add_token(
+                TokenType.LESS_EQUAL if self.match(expected="=") else TokenType.LESS
+            )
         elif char == ">":
-            self.add_token(TokenType.GREATER_EQUAL if self.match(expected="=") else TokenType.GREATER)
+            self.add_token(
+                TokenType.GREATER_EQUAL
+                if self.match(expected="=")
+                else TokenType.GREATER
+            )
         elif char in {" ", "\t", "\r"}:
             pass
         elif char == "\n":
             self._line += 1
-        elif  char == '"':
+        elif char == '"':
             self.string()
         elif is_digit(char):
             self.number()
@@ -125,18 +144,24 @@ class LoxScanner:
             self.identifier()
         else:
             error(self._line, f"Token at {self._current} not recognised")
-            raise TokenNotRecognised("Line %s offset %s token  not recognised: %s" % (self._line, self._current, self.source[self._current - 1]))
+            raise TokenNotRecognised(
+                "Line %s offset %s token  not recognised: %s"
+                % (self._line, self._current, self.source[self._current - 1])
+            )
 
     def identifier(self):
-        while is_alphanumeric(self.peek()): self.advance()
-        value = self.source[self._start: self._current]
+        while is_alphanumeric(self.peek()):
+            self.advance()
+        value = self.source[self._start : self._current]
         token_type = TokenType.KEYWORDS.get(value)
-        if not token_type: token_type = TokenType.IDENTIFIER
+        if not token_type:
+            token_type = TokenType.IDENTIFIER
         self.add_token(token_type)
 
     def string(self):
         while self.peek() != '"' and not self.is_at_end():
-            if self.peek() == "\n": self._line += 1
+            if self.peek() == "\n":
+                self._line += 1
             self.advance()
 
         if self.is_at_end():
@@ -145,8 +170,8 @@ class LoxScanner:
 
         self.advance()
 
-        value = self.source[self._start + 1: self._current - 1]
-        
+        value = self.source[self._start + 1 : self._current - 1]
+
         self._add_token(type_=TokenType.STRING, literal=value)
 
     def number(self):
@@ -161,21 +186,23 @@ class LoxScanner:
             while is_digit(self.peek()):
                 self.advance()
         if _is_float:
-            value =  float(self.source[self._start: self._current])
+            value = float(self.source[self._start : self._current])
         else:
-            value = int(self.source[self._start: self._current])
-        
+            value = int(self.source[self._start : self._current])
+
         self._add_token(type_=TokenType.NUMBER, literal=value)
 
     def is_at_end(self):
         return self._current >= len(self.source)
 
     def peek(self):
-        if self.is_at_end(): return '\0';
+        if self.is_at_end():
+            return "\0"
         return self.source[self._current]
 
     def peek_next(self):
-        if self._current + 1 >= len(self.source): return '\0';
+        if self._current + 1 >= len(self.source):
+            return "\0"
         return self.source[self._current + 1]
 
     def match(self, expected):
@@ -187,8 +214,10 @@ class LoxScanner:
         Returns:
             boolean: True if there is a match, False otherwise
         """
-        if self.is_at_end(): return False
-        if not (self.source[self._current] == expected): return False
+        if self.is_at_end():
+            return False
+        if not (self.source[self._current] == expected):
+            return False
         self._inc_current()
         return True
 
