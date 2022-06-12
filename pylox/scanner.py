@@ -1,5 +1,6 @@
 from pylox.tokens import TokenType
 
+
 def error(line: int, message: str):
     print(f"[line: {line}]: Error {message}")
 

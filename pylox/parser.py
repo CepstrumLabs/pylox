@@ -1,9 +1,9 @@
 
 from typing import List
 
+from pylox.expr import Binary, Grouping, Literal, Unary
 from pylox.scanner import LoxToken, error
 from pylox.tokens import TokenType
-from pylox.expr import Binary, Grouping, Literal, Unary
 
 
 class ParserError(Exception):

@@ -1,4 +1,4 @@
-from pylox.expr_visitor import Visitor, Expr
+from pylox.expr_visitor import Expr, Visitor
 from pylox.tokens import TokenType
 
 

@@ -1,10 +1,10 @@
 import pathlib
 import sys
 
+from pylox.expr_eval import ExpressionInterpreter as Interpreter
+from pylox.expr_visitor import AstPrinter
 from pylox.parser import Parser as LoxParser
 from pylox.scanner import LoxScanner
-from pylox.expr_visitor import AstPrinter
-from pylox.expr_eval import ExpressionInterpreter as Interpreter
 
 LOGO = r"""
   _     _____  __

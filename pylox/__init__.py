@@ -1,3 +1,3 @@
-from .pylox import LoxIntepreter, LoxException
-from .parser import Parser, LoxToken
+from .parser import LoxToken, Parser
+from .pylox import LoxException, LoxIntepreter
 from .tokens import TokenType

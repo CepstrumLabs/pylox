@@ -2,6 +2,7 @@
 # on June 12, 2022 17:11:17
 from pylox.scanner import LoxToken as Token
 
+
 class Expr:
 	
 	def accept(self, visitor: 'ExprVisitor'):

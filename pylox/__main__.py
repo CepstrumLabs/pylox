@@ -1,4 +1,4 @@
-from pylox.pylox import LoxIntepreter, LoxException
+from pylox.pylox import LoxException, LoxIntepreter
 
 if __name__ == "__main__":
     USAGE = """
