@@ -1,3 +1,5 @@
+![Build](https://github.com/CepstrumLabs/pylox/actions/workflows/ci.yml/badge.svg)
+
 # pylox
 
 Pylox is a python implementation of the [LOX language](https://craftinginterpreters.com/the-lox-language.html) and interpreter that are defined in [Crafting Interprers](http://craftinginterpreters.com/) by Bill Nystrom, which is by the way a very recommended read if you 're into writing your own interpreter (because reinventing the wheel is cool 😎 right)
