@@ -1,15 +1,15 @@
-
 from typing import List
 
+from pylox.expr import Binary, Grouping, Literal, Unary
 from pylox.scanner import LoxToken, error
 from pylox.tokens import TokenType
-from pylox.expr import Binary, Grouping, Literal, Unary
 
 
 class ParserError(Exception):
     """
     Exception class for Parser
     """
+
 
 class Parser:
     """
@@ -25,7 +25,7 @@ class Parser:
     term -> factor ( ("-" | "+") factor)* ;
     factor -> unary ( ("*" | "/") unary)* ;
     unary ->("!" | "-") unary | primary ;
-    primary -> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ; 
+    primary -> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
 
 
     '''
@@ -34,6 +34,7 @@ class Parser:
     b) Given an invalid sequence of tokens, detect any errors and tell the user about it
     '''
     """
+
     def __init__(self, tokens: List[LoxToken]):
         self._tokens = tokens
         self.current = 0
@@ -43,31 +44,36 @@ class Parser:
         try:
             return self.expression()
         except ParserError as e:
-           return None
+            return None
 
     def expression(self):
         return self.equality()
-    
+
     def equality(self):
-        
+
         expr = self.comparison()
 
         while self.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL):
             operator = self._previous()
             right = self.comparison()
             expr = Binary(left=expr, operator=operator, right=right)
-        
+
         return expr
 
     def comparison(self):
 
         expr = self.term()
 
-        while self.match(TokenType.LESS, TokenType.LESS_EQUAL, TokenType.GREATER, TokenType.GREATER_EQUAL):
+        while self.match(
+            TokenType.LESS,
+            TokenType.LESS_EQUAL,
+            TokenType.GREATER,
+            TokenType.GREATER_EQUAL,
+        ):
             operator = self._previous()
             right = self.term()
             expr = Binary(left=expr, operator=operator, right=right)
-        
+
         return expr
 
     def term(self):
@@ -78,27 +84,27 @@ class Parser:
             operator = self._previous()
             right = self.factor()
             expr = Binary(left=expr, operator=operator, right=right)
-        
+
         return expr
 
     def factor(self):
-    
+
         expr = self.unary()
 
         while self.match(TokenType.STAR, TokenType.SLASH):
             operator = self._previous()
             right = self.unary()
             expr = Binary(left=expr, operator=operator, right=right)
-        
+
         return expr
 
     def unary(self):
-        
+
         if self.match(TokenType.BANG, TokenType.MINUS):
             operator = self._previous()
             right = self.unary()
             return Unary(operator=operator, right=right)
-        
+
         primary = self.primary()
         return primary
 
@@ -113,7 +119,9 @@ class Parser:
             return Literal(value=self._previous().literal)
         elif self.match(TokenType.LEFT_PAREN):
             expr = self.expression()
-            self.consume(type_=TokenType.RIGHT_PAREN, msg="Expect ')' after left parenthesis");
+            self.consume(
+                type_=TokenType.RIGHT_PAREN, msg="Expect ')' after left parenthesis"
+            )
             return Grouping(expression=expr)
         else:
             self.error(self.peek(), msg="Expected expression")
@@ -127,12 +135,12 @@ class Parser:
                 self.advance()
                 return True
         return False
-    
+
     def _check(self, type_):
         if self.is_at_end():
             return False
         return self.peek().type_ == type_
-    
+
     def is_at_end(self):
         return self.peek().type_ == TokenType.EOF
 
@@ -140,7 +148,9 @@ class Parser:
         try:
             return self._tokens[self.current]
         except IndexError:
-            return LoxToken(type_=TokenType.EOF, lexeme="\0", literal=None, line=self.line)
+            return LoxToken(
+                type_=TokenType.EOF, lexeme="\0", literal=None, line=self.line
+            )
 
     def advance(self):
         if not self.is_at_end():
@@ -157,4 +167,6 @@ class Parser:
         if token.type_ == TokenType.EOF:
             raise ParserError(error(token.line, message=" at end" + msg))
         else:
-            raise ParserError(error(token.line, message=f"at token {token.lexeme} " + msg))
+            raise ParserError(
+                error(token.line, message=f"at token {token.lexeme} " + msg)
+            )

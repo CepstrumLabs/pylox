@@ -15,3 +15,6 @@ jobs:
         run: make build
       - name: Test pylox
         run: make test
+      - name: Lint pylox
+        run: make lint
+

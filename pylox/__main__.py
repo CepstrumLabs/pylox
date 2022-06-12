@@ -1,10 +1,11 @@
-from pylox.pylox import LoxIntepreter, LoxException
+from pylox.pylox import LoxException, LoxIntepreter
 
 if __name__ == "__main__":
     USAGE = """
     pylox [script.lox]
     """
     import sys
+
     interpreter = LoxIntepreter()
     if len(sys.argv) == 1:
         interpreter._run_prompt()

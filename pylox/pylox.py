@@ -1,10 +1,10 @@
 import pathlib
 import sys
 
+from pylox.expr_eval import ExpressionInterpreter as Interpreter
+from pylox.expr_visitor import AstPrinter
 from pylox.parser import Parser as LoxParser
 from pylox.scanner import LoxScanner
-from pylox.expr_visitor import AstPrinter
-from pylox.expr_eval import ExpressionInterpreter as Interpreter
 
 LOGO = r"""
   _     _____  __
@@ -17,12 +17,13 @@ LOX interactive interpreter
 pylox v0.0.3
 2022 @CepstrumLabs
     """
+
+
 class LoxException(Exception):
     pass
 
 
 class LoxIntepreter:
-
     def __init__(self):
         self.had_error = False
 
@@ -37,8 +38,7 @@ class LoxIntepreter:
             self._run_file(file=filepath)
 
     def _run_prompt(self):
-        """Run LOX source code line by line
-        """
+        """Run LOX source code line by line"""
         print(LOGO)
         while True:
             line = input(">>> ")

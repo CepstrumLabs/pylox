@@ -1,20 +1,24 @@
-from pylox.expr_visitor import Visitor, Expr
+from pylox.expr_visitor import Expr, Visitor
 from pylox.tokens import TokenType
 
 
 class LoxRuntimeError(Exception):
-
     def __init__(self, token, msg):
         self.token = token
         self.msg = msg
 
+
 def _is_number(value):
     return isinstance(value, (int, float))
+
 
 def _checkNumberOperands(operator, left, right):
     if _is_number(left) and _is_number(right):
         return
-    raise LoxRuntimeError(f"Operands for {operator.lexeme} should be int or float not {type(left)}")
+    raise LoxRuntimeError(
+        f"Operands for {operator.lexeme} should be int or float not {type(left)}"
+    )
+
 
 def _checkNumberOperand(operator, operand):
     if _is_number(operand):
@@ -28,17 +32,17 @@ def _isTruthy(object_):
     if isinstance(object_, bool):
         return bool(object_)
     return True
-    
+
 
 def _isEqual(left, right):
     return left == right
 
+
 def _runtime_error(msg, line):
-    print(msg + ' @ [line ' + str(line) + ']')
+    print(msg + " @ [line " + str(line) + "]")
 
 
 class ExpressionInterpreter(Visitor):
-    
     def visitLiteralExpr(self, expr: "Expr"):
         return expr.value
 
@@ -47,7 +51,7 @@ class ExpressionInterpreter(Visitor):
         right = self.evaluate(expr.right)
 
         operator = expr.operator
-        
+
         if operator.type_ == TokenType.PLUS:
             if isinstance(left, str) and isinstance(right, str):
                 return left + right
@@ -71,13 +75,13 @@ class ExpressionInterpreter(Visitor):
         if operator.type_ == TokenType.EQUAL_EQUAL:
             return _isEqual(left, right)
         if operator.type_ == TokenType.GREATER:
-            return (left > right)
+            return left > right
         if operator.type_ == TokenType.GREATER_EQUAL:
-            return (left >= right)
+            return left >= right
         if operator.type_ == TokenType.LESS:
-            return (left < right)
+            return left < right
         if operator.type_ == TokenType.LESS_EQUAL:
-            return (left >= right)
+            return left >= right
 
     def visitUnaryExpr(self, expr: "Expr"):
         operator = expr.operator
@@ -85,7 +89,7 @@ class ExpressionInterpreter(Visitor):
 
         if operator.type_ == TokenType.BANG:
             return not _isTruthy(right)
-        
+
         if operator.type_ == TokenType.MINUS:
             _checkNumberOperand(operator=operator, operand=right)
             return -(float(right))

@@ -8,6 +8,13 @@ build_req:
 build: build_req
 	python3 setup.py sdist bdist_wheel
 
+isort:
+	isort --check pylox
+
+black:
+	black --check pylox
+
+lint: black isort
 
 test: build_req
 	pytest -svvvv
