@@ -1,7 +1,8 @@
 from typing import List
 
-from pylox.expr import Binary, Grouping, Literal, Unary
+from pylox.expr import Assign, Binary, Grouping, Literal, Unary, Variable
 from pylox.scanner import LoxToken, error
+from pylox.stmt import Expression, Print, Var
 from pylox.tokens import TokenType
 
 
@@ -9,6 +10,9 @@ class ParserError(Exception):
     """
     Exception class for Parser
     """
+
+    def __init__(self, message):
+        self.message = message
 
 
 class Parser:
@@ -18,16 +22,19 @@ class Parser:
 
     Grammar
     ========
-
-    expression -> equality;
+    program -> declaration* EOF ;
+    declaration -> varDeclaration | statement ;
+    statement -> expressionStmt | printStatement ;
+    expressionStmt -> expression ";" ;
+    printStatement -> print expression ;
+    expression -> assignment ;
+    assignment -> IDENTIFIER "=" equality | equality ;
     equality -> comparison ( ("!=" | "==") comparison)* ;
     comparison -> term ( (">" | ">=" | "<" | "<=") term)* ;
     term -> factor ( ("-" | "+") factor)* ;
     factor -> unary ( ("*" | "/") unary)* ;
     unary ->("!" | "-") unary | primary ;
     primary -> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
-
-
     '''
     A parser has two responsibilities:
     a) Given a valid sequence of tokens, produce a corresponding syntaxt tree
@@ -41,13 +48,68 @@ class Parser:
         self.line = 0
 
     def parse(self):
+        statements = []
         try:
-            return self.expression()
+            while not (self.is_at_end()):
+                statements.append(self.declaration())
+            return statements
         except ParserError as e:
-            return None
+            error(self.line, message="Encountered parse error")
+            raise e
+
+    def declaration(self):
+        try:
+            if self.match(TokenType.VAR):
+                return self.var_declaration()
+            return self.statement()
+        except ParserError as e:
+            error(line=self.line, message=e.message)
+            raise e
+
+    def var_declaration(self):
+        name = self.consume(
+            type_=TokenType.IDENTIFIER, msg="Expected identifier"
+        ).lexeme
+
+        initialiser = None
+        if self.match(TokenType.EQUAL):
+            initialiser = self.expression()
+
+        self.consume(
+            type_=TokenType.SEMICOLON, msg="Expect ';' after variable declaration"
+        )
+        return Var(name=name, initialiser=initialiser)
+
+    def statement(self):
+        if self.match(TokenType.PRINT):
+            return self.print_statement()
+        return self.expression_statement()
+
+    def print_statement(self):
+        expr = self.expression()
+        self.consume(type_=TokenType.SEMICOLON, msg="Expect ';' after value")
+
+        return Print(expression=expr)
+
+    def expression_statement(self):
+        expr = self.expression()
+        self.consume(type_=TokenType.SEMICOLON, msg="Expect ';' after expression")
+
+        return Expression(expression=expr)
 
     def expression(self):
-        return self.equality()
+        return self.assignment()
+
+    def assignment(self):
+        expr = self.equality()
+
+        assign_to = self._previous()
+
+        if self.match(TokenType.EQUAL):
+            to_assign = self.equality()
+            return Assign(assign_to=assign_to, to_assign=to_assign)
+
+        return expr
 
     def equality(self):
 
@@ -110,13 +172,15 @@ class Parser:
 
     def primary(self):
         if self.match(TokenType.TRUE):
-            return Literal(value=True)
+            return Literal(value="true")
         if self.match(TokenType.FALSE):
-            return Literal(value=False)
+            return Literal(value="false")
         if self.match(TokenType.NIL):
             return Literal(value=None)
         if self.match(TokenType.NUMBER, TokenType.STRING):
             return Literal(value=self._previous().literal)
+        if self.match(TokenType.IDENTIFIER):
+            return Variable(name=self._previous().lexeme)
         elif self.match(TokenType.LEFT_PAREN):
             expr = self.expression()
             self.consume(
@@ -129,10 +193,11 @@ class Parser:
     def _previous(self):
         return self._tokens[self.current - 1]
 
-    def match(self, *types):
+    def match(self, *types, with_advance=True):
         for type_ in types:
             if self._check(type_=type_):
-                self.advance()
+                if with_advance:
+                    self.advance()
                 return True
         return False
 
@@ -165,7 +230,7 @@ class Parser:
 
     def error(self, token, msg):
         if token.type_ == TokenType.EOF:
-            raise ParserError(error(token.line, message=" at end" + msg))
+            raise ParserError(error(token.line, message=" at end " + msg))
         else:
             raise ParserError(
                 error(token.line, message=f"at token {token.lexeme} " + msg)

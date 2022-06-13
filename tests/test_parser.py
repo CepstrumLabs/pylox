@@ -4,6 +4,7 @@ from pylox.expr import Literal, Binary, Unary
 from pylox.tokens import TokenType
 from pylox.scanner import LoxToken
 from pylox.parser import Parser
+from pylox.stmt import Expression, Stmt, Print
 
 
 def create_number_token(value, line=1):
@@ -33,8 +34,8 @@ class TestParser:
         Ensure that an expression is parsed as expected
         """
         value = 123
-        tokens = [create_number_token(value=value)]
-        expected = create_literal(value=value)
+        tokens = [create_number_token(value=value), create_token(type_=TokenType.SEMICOLON)]
+        expected = [Expression(expression=create_literal(value=value))]
         parser = pylox.Parser(tokens=tokens)
         expr = parser.parse()
         assert expr == expected
@@ -43,8 +44,8 @@ class TestParser:
         """
         Ensure that an equality is parsed as expected
         """
-        tokens = [create_number_token(1), create_token(type_=TokenType.BANG_EQUAL), create_number_token(1)]
-        expected = Binary(left=create_literal(value=1), operator=create_token(type_=TokenType.BANG_EQUAL), right=create_literal(value=1))
+        tokens = [create_number_token(1), create_token(type_=TokenType.BANG_EQUAL), create_number_token(1), create_token(type_=TokenType.SEMICOLON)]
+        expected = [Expression(expression=Binary(left=create_literal(value=1), operator=create_token(type_=TokenType.BANG_EQUAL), right=create_literal(value=1)))]
         parser = Parser(tokens=tokens)
         expr = parser.parse()
         assert expr == expected
@@ -53,8 +54,8 @@ class TestParser:
         """
         Ensure that an comparison is parsed as expected
         """
-        tokens = [create_number_token(1), create_token(type_=TokenType.GREATER_EQUAL), create_number_token(1)]
-        expected = Binary(left=create_literal(value=1), operator=create_token(type_=TokenType.GREATER_EQUAL), right=create_literal(value=1))
+        tokens = [create_number_token(1), create_token(type_=TokenType.GREATER_EQUAL), create_number_token(1), create_token(type_=TokenType.SEMICOLON)]
+        expected = [Expression(expression=Binary(left=create_literal(value=1), operator=create_token(type_=TokenType.GREATER_EQUAL), right=create_literal(value=1)))]
         parser = Parser(tokens=tokens)
         expr = parser.parse()
         assert expr == expected
@@ -63,8 +64,8 @@ class TestParser:
         """
         Ensure that a term is parsed as expected
         """
-        tokens = [create_number_token(1), create_token(type_=TokenType.PLUS), create_number_token(1)]
-        expected = Binary(left=create_literal(value=1), operator=create_token(type_=TokenType.PLUS), right=create_literal(value=1))
+        tokens = [create_number_token(1), create_token(type_=TokenType.PLUS), create_number_token(1), create_token(type_=TokenType.SEMICOLON)]
+        expected = [Expression(expression=Binary(left=create_literal(value=1), operator=create_token(type_=TokenType.PLUS), right=create_literal(value=1)))]
         parser = Parser(tokens=tokens)
         expr = parser.parse()
         assert expr == expected
@@ -73,8 +74,8 @@ class TestParser:
         """
         Ensure that an factor is parsed as expected
         """
-        tokens = [create_number_token(1), create_token(type_=TokenType.STAR), create_number_token(1)]
-        expected = Binary(left=create_literal(value=1), operator=create_token(type_=TokenType.STAR), right=create_literal(value=1))
+        tokens = [create_number_token(1), create_token(type_=TokenType.STAR), create_number_token(1), create_token(type_=TokenType.SEMICOLON)]
+        expected = [Expression(expression=Binary(left=create_literal(value=1), operator=create_token(type_=TokenType.STAR), right=create_literal(value=1)))]
         parser = Parser(tokens=tokens)
         expr = parser.parse()
         assert expr == expected
@@ -83,8 +84,8 @@ class TestParser:
         """
         Ensure that an unary is parsed as expected
         """
-        tokens = [create_token(type_=TokenType.MINUS), create_number_token(value=123)]
-        expected = Unary(operator=create_token(type_=TokenType.MINUS), right=create_literal(value=123))
+        tokens = [create_token(type_=TokenType.MINUS), create_number_token(value=123), create_token(type_=TokenType.SEMICOLON)]
+        expected = [Expression(expression=Unary(operator=create_token(type_=TokenType.MINUS), right=create_literal(value=123)))]
         parser = Parser(tokens=tokens)
         expr = parser.parse()
         assert expr == expected
@@ -93,8 +94,8 @@ class TestParser:
         """
         Ensure that an primary is parsed as expected
         """
-        tokens = [create_number_token(1)]
-        expected = create_literal(value=1)
+        tokens = [create_number_token(1), create_token(type_=TokenType.SEMICOLON)]
+        expected = [Expression(expression=create_literal(value=1))]
         parser = Parser(tokens=tokens)
         expr = parser.parse()
         assert expr == expected
@@ -103,8 +104,8 @@ class TestParser:
         """
         Ensure that an primary is parsed as expected
         """
-        tokens = [create_string_token(value="imastring")]
-        expected = create_literal(value="imastring")
+        tokens = [create_string_token(value="imastring"), create_token(type_=TokenType.SEMICOLON)]
+        expected = [Expression(expression=create_literal(value="imastring"))]
         parser = Parser(tokens=tokens)
         expr = parser.parse()
         assert expr == expected

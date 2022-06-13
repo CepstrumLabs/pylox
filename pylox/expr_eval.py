@@ -1,3 +1,5 @@
+from typing import List
+
 from pylox.expr_visitor import Expr, Visitor
 from pylox.tokens import TokenType
 
@@ -43,18 +45,21 @@ def _runtime_error(msg, line):
 
 
 class ExpressionInterpreter(Visitor):
-    def visitLiteralExpr(self, expr: "Expr"):
+    def __init__(self):
+        self.environ = {}
+
+    def visit_literal_expr(self, expr: "Expr"):
         return expr.value
 
-    def visitBinaryExpr(self, expr: "Expr"):
+    def visit_binary_expr(self, expr: "Expr"):
         left = self.evaluate(expr.left)
         right = self.evaluate(expr.right)
 
         operator = expr.operator
 
         if operator.type_ == TokenType.PLUS:
-            if isinstance(left, str) and isinstance(right, str):
-                return left + right
+            if isinstance(left, str):
+                return left + str(right)
             _checkNumberOperands(operator=operator, left=left, right=right)
             return float(left) + float(right)
         if operator.type_ == TokenType.MINUS:
@@ -83,7 +88,7 @@ class ExpressionInterpreter(Visitor):
         if operator.type_ == TokenType.LESS_EQUAL:
             return left <= right
 
-    def visitUnaryExpr(self, expr: "Expr"):
+    def visit_unary_expr(self, expr: "Expr"):
         operator = expr.operator
         right = self.evaluate(expr.right)
 
@@ -94,17 +99,41 @@ class ExpressionInterpreter(Visitor):
             _checkNumberOperand(operator=operator, operand=right)
             return -(float(right))
 
-    def visitGroupingExpr(self, expr: "Expr"):
+    def visit_grouping_expr(self, expr: "Expr"):
         return self.evaluate(expr.expression)
+
+    def visit_assign_expr(self, expr: "Expr"):
+        value = self.evaluate(expr.to_assign)
+        name = expr.assign_to.lexeme
+
+        self.environ[name] = value
+        return value
+
+    def visit_print_stmt(self, stmt: "Stmt"):
+        expr = self.evaluate(stmt.expression)
+        print(expr)
+        return None
+
+    def visit_variable_expr(self, expr: "Expr"):
+        return self.environ[expr.name]
+
+    def visit_expression_stmt(self, stmt: "Stmt"):
+        self.evaluate(stmt.expression)
+
+    def visit_var_stmt(self, stmt: "Stmt"):
+        expr = self.evaluate(stmt.initialiser)
+        self.environ[stmt.name] = expr
+        return None
 
     def evaluate(self, expr: "Expr"):
         return expr.accept(self)
 
-    def interpret(self, expr: "Expr"):
+    def interpret(self, statements: List["Stmt"]):
         try:
-            return self.evaluate(expr)
+            for statement in statements:
+                self._execute(statement)
         except LoxRuntimeError as error:
             _runtime_error(error.msg, error.token.line)
 
-        except Exception:
-            _runtime_error("Uknown exception occured", None)
+    def _execute(self, statement):
+        return statement.accept(self)
