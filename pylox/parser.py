@@ -1,6 +1,6 @@
 from typing import List
 
-from pylox.expr import Binary, Grouping, Literal, Unary, Variable
+from pylox.expr import Binary, Grouping, Literal, Unary, Variable, Assign
 from pylox.scanner import LoxToken, error
 from pylox.tokens import TokenType
 from pylox.stmt import Expression, Print, Var
@@ -97,11 +97,15 @@ class Parser:
         return self.assignment()
     
     def assignment(self):
-        if self.match(TokenType.IDENTIFIER):
-            self.consume(type_=TokenType.EQUAL, msg="Expected assignment operator \"=\" ")
-            equal_to = self.equality()
-            return equality()
-        return self.equality()
+        expr = self.equality()
+
+        assign_to = self._previous()
+        
+        if self.match(TokenType.EQUAL):
+            to_assign = self.equality()
+            return Assign(assign_to=assign_to, to_assign=to_assign)
+        
+        return expr
 
     def equality(self):
 
@@ -185,10 +189,11 @@ class Parser:
     def _previous(self):
         return self._tokens[self.current - 1]
 
-    def match(self, *types):
+    def match(self, *types, with_advance=True):
         for type_ in types:
             if self._check(type_=type_):
-                self.advance()
+                if with_advance:
+                    self.advance()
                 return True
         return False
 

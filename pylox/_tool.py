@@ -117,6 +117,7 @@ def generate_ast(directory):
         "Literal: object value",
         "Variable: Token name",
         "Grouping: Expr expression",
+        "Assign: Token assign_to, Expr to_assign",
     ]
 
     define_ast(output_dir=output_dir, base_name=base_name, types=TYPES)

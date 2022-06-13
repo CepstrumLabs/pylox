@@ -102,6 +102,13 @@ class ExpressionInterpreter(Visitor):
 
     def visit_grouping_expr(self, expr: "Expr"):
         return self.evaluate(expr.expression)
+    
+    def visit_assign_expr(self, expr: "Expr"):
+        value = self.evaluate(expr.to_assign)
+        name = expr.assign_to.lexeme
+
+        self.environ[name] = value
+        return value
 
     def visit_print_stmt(self, stmt: "Stmt"):
         expr = self.evaluate(stmt.expression)
