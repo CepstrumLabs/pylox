@@ -1,18 +1,18 @@
 from typing import List
 
-from pylox.expr import Binary, Grouping, Literal, Unary, Variable, Assign
+from pylox.expr import Assign, Binary, Grouping, Literal, Unary, Variable
 from pylox.scanner import LoxToken, error
-from pylox.tokens import TokenType
 from pylox.stmt import Expression, Print, Var
+from pylox.tokens import TokenType
 
 
 class ParserError(Exception):
     """
     Exception class for Parser
     """
+
     def __init__(self, message):
         self.message = message
-
 
 
 class Parser:
@@ -65,15 +65,19 @@ class Parser:
         except ParserError as e:
             error(line=self.line, message=e.message)
             raise e
-    
+
     def var_declaration(self):
-        name = self.consume(type_=TokenType.IDENTIFIER, msg="Expected identifier").lexeme
+        name = self.consume(
+            type_=TokenType.IDENTIFIER, msg="Expected identifier"
+        ).lexeme
 
         initialiser = None
         if self.match(TokenType.EQUAL):
             initialiser = self.expression()
 
-        self.consume(type_=TokenType.SEMICOLON, msg="Expect ';' after variable declaration")
+        self.consume(
+            type_=TokenType.SEMICOLON, msg="Expect ';' after variable declaration"
+        )
         return Var(name=name, initialiser=initialiser)
 
     def statement(self):
@@ -95,16 +99,16 @@ class Parser:
 
     def expression(self):
         return self.assignment()
-    
+
     def assignment(self):
         expr = self.equality()
 
         assign_to = self._previous()
-        
+
         if self.match(TokenType.EQUAL):
             to_assign = self.equality()
             return Assign(assign_to=assign_to, to_assign=to_assign)
-        
+
         return expr
 
     def equality(self):
@@ -168,9 +172,9 @@ class Parser:
 
     def primary(self):
         if self.match(TokenType.TRUE):
-            return Literal(value='true')
+            return Literal(value="true")
         if self.match(TokenType.FALSE):
-            return Literal(value='false')
+            return Literal(value="false")
         if self.match(TokenType.NIL):
             return Literal(value=None)
         if self.match(TokenType.NUMBER, TokenType.STRING):

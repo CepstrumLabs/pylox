@@ -3,7 +3,8 @@ import sys
 
 from pylox.expr_eval import ExpressionInterpreter as Interpreter
 from pylox.expr_visitor import AstPrinter
-from pylox.parser import ParserError, Parser as LoxParser
+from pylox.parser import Parser as LoxParser
+from pylox.parser import ParserError
 from pylox.scanner import LoxScanner
 
 LOGO = r"""

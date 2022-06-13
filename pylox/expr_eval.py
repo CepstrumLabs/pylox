@@ -45,7 +45,6 @@ def _runtime_error(msg, line):
 
 
 class ExpressionInterpreter(Visitor):
-
     def __init__(self):
         self.environ = {}
 
@@ -102,7 +101,7 @@ class ExpressionInterpreter(Visitor):
 
     def visit_grouping_expr(self, expr: "Expr"):
         return self.evaluate(expr.expression)
-    
+
     def visit_assign_expr(self, expr: "Expr"):
         value = self.evaluate(expr.to_assign)
         name = expr.assign_to.lexeme
@@ -115,14 +114,14 @@ class ExpressionInterpreter(Visitor):
         print(expr)
         return None
 
-    def visit_variable_expr(self, expr: 'Expr'):
+    def visit_variable_expr(self, expr: "Expr"):
         return self.environ[expr.name]
 
     def visit_expression_stmt(self, stmt: "Stmt"):
         self.evaluate(stmt.expression)
-    
+
     def visit_var_stmt(self, stmt: "Stmt"):
-        expr = self.evaluate(stmt.initialiser);
+        expr = self.evaluate(stmt.initialiser)
         self.environ[stmt.name] = expr
         return None
 
