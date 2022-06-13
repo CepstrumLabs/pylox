@@ -1,0 +1,32 @@
+var a = 1;
+var b = 3;
+
+print "a = 1";
+print "b = 1";
+print "a + b = " + (a + b);
+
+var c = a;
+print "var c = a";
+print c;
+
+print "Hello World!";
+
+var c = (a <= b);
+print "var c = " + "(a <= b)";
+print c;
+
+var c = (a == b);
+print "var c = " + "(a == b)";
+print c;
+
+var c = (a != b);
+print "var c = " + "(a != b)";
+print c;
+
+var c = (a >= b);
+print "var c = " + "(a >= b)";
+print c;
+
+c = 5;
+print "var c = 5";
+print c;
