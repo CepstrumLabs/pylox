@@ -45,6 +45,10 @@ def _runtime_error(msg, line):
 
 
 class ExpressionInterpreter(Visitor):
+
+    def __init__(self):
+        self.environ = {}
+
     def visit_literal_expr(self, expr: "Expr"):
         return expr.value
 
@@ -55,8 +59,8 @@ class ExpressionInterpreter(Visitor):
         operator = expr.operator
 
         if operator.type_ == TokenType.PLUS:
-            if isinstance(left, str) and isinstance(right, str):
-                return left + right
+            if isinstance(left, str):
+                return left + str(right)
             _checkNumberOperands(operator=operator, left=left, right=right)
             return float(left) + float(right)
         if operator.type_ == TokenType.MINUS:
@@ -104,8 +108,16 @@ class ExpressionInterpreter(Visitor):
         print(expr)
         return None
 
+    def visit_variable_expr(self, expr: 'Expr'):
+        return self.environ[expr.name]
+
     def visit_expression_stmt(self, stmt: "Stmt"):
         self.evaluate(stmt.expression)
+    
+    def visit_var_stmt(self, stmt: "Stmt"):
+        expr = self.evaluate(stmt.initialiser);
+        self.environ[stmt.name] = expr
+        return None
 
     def evaluate(self, expr: "Expr"):
         return expr.accept(self)

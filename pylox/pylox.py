@@ -3,7 +3,7 @@ import sys
 
 from pylox.expr_eval import ExpressionInterpreter as Interpreter
 from pylox.expr_visitor import AstPrinter
-from pylox.parser import Parser as LoxParser
+from pylox.parser import ParserError, Parser as LoxParser
 from pylox.scanner import LoxScanner
 
 LOGO = r"""
@@ -26,6 +26,7 @@ class LoxException(Exception):
 class LoxIntepreter:
     def __init__(self):
         self.had_error = False
+        self.interpreter = Interpreter()
 
     def run_file(self, file=None):
         if not file:
@@ -71,7 +72,11 @@ class LoxIntepreter:
         scanner = LoxScanner(source=source)
         tokens = scanner.scan_tokens()
         parser = LoxParser(tokens=tokens)
-        statements = parser.parse()
-        interpreter = Interpreter()
-        result = interpreter.interpret(statements)
+        try:
+            statements = parser.parse()
+        except ParserError:
+            raise
+        result = None
+        if not self.had_error:
+            result = self.interpreter.interpret(statements=statements)
         return result

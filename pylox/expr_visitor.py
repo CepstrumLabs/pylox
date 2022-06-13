@@ -1,28 +1,36 @@
 from typing import List
+from abc import ABC, abstractmethod
 
 from pylox.expr import Expr
 
 
-class Visitor:
+class Visitor(ABC):
     """
     Abstract Visitor class
     """
 
+    
+    @abstractmethod    
     def visit_literal_expr(self, expr: "Expr"):
         raise NotImplementedError("Subclasses should implement this method")
-
+    
+    @abstractmethod
     def visit_binary_expr(self, expr: "Expr"):
         raise NotImplementedError("Subclasses should implement this method")
-
+    
+    @abstractmethod
     def visit_unary_expr(self, expr: "Expr"):
         raise NotImplementedError("Subclasses should implement this method")
-
+    
+    @abstractmethod
     def visit_grouping_expr(self, expr: "Expr"):
         raise NotImplementedError("Subclasses should implement this method")
-
+    
+    @abstractmethod
     def visit_print_stmt(self, stmt: "Stmt"):
         raise NotImplementedError("Subclasses should implement this method")
-
+    
+    @abstractmethod
     def visit_expression_stmt(self, stmt: "Stmt"):
         raise NotImplementedError("Subclasses should implement this method")
 
