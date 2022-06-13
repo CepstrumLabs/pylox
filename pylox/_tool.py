@@ -88,7 +88,7 @@ def _add_init_method(field_defs):
     source = (
         TAB
         + "def __init__(self, "
-        + ", ".join([f"{field_def[1]}: {field_def[0]}" for field_def in field_defs])
+        + ", ".join([f"{field_def[1]}: '{field_def[0]}'" for field_def in field_defs])
         + "):"
         + NEWLINE
     )
@@ -102,7 +102,7 @@ def _add_accept_method(parent_class_name, class_name):
     source = TAB + f"def accept(self, visitor: '{parent_class_name}Visitor'):" + NEWLINE
     source += (
         2 * TAB
-        + f"return visitor.visit{class_name}{parent_class_name}(self)"
+        + f"return visitor.visit_{class_name.lower()}_{parent_class_name.lower()}(self)"
         + 2 * NEWLINE
     )
     return source
@@ -115,8 +115,14 @@ def generate_ast(directory):
         "Binary: Expr left, Token operator, Expr right",
         "Unary: Token operator, Expr right",
         "Literal: object value",
+        "Variable: Token name",
         "Grouping: Expr expression",
     ]
+
+    define_ast(output_dir=output_dir, base_name=base_name, types=TYPES)
+
+    base_name = "Stmt"
+    TYPES = ["Expression: Expr expression", "Print: Expr expression", "Var: Token name, Expr initialiser"]
 
     define_ast(output_dir=output_dir, base_name=base_name, types=TYPES)
 
