@@ -1,7 +1,6 @@
 from typing import List
 
-from pylox.expr import (Assign, Binary, Grouping, Literal, Logical, Unary,
-                        Variable)
+from pylox.expr import Assign, Binary, Grouping, Literal, Logical, Unary, Variable
 from pylox.scanner import LoxToken, error
 from pylox.stmt import Block, Expression, If, Print, Var
 from pylox.tokens import TokenType
