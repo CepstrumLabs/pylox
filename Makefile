@@ -19,4 +19,4 @@ lint: black isort
 test: build_req
 	pytest -svvvv
 
-all: build lint test
+all: build lint test lang_test

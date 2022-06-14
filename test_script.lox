@@ -57,4 +57,12 @@ print ("b = " + b + " In block level 1");
         }
 }
 
+print "b=1"
 
+if (b == 1) {print "true";} else {print "false";}
+
+if (b == 2){
+    print "true";
+} else {
+    print "false";
+}

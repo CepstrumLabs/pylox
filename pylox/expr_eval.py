@@ -146,7 +146,18 @@ class ExpressionInterpreter(Visitor):
         return None
 
     def visit_block_stmt(self, block: "Stmt"):
-        self.execute_block(statements=block.statements, environment=self.environ)
+        self.execute_block(statements=block.statements)
+
+    def visit_if_stmt(self, if_stmt: "Stmt"):
+        condition = if_stmt.condition
+        then_branch = if_stmt.then_branch
+        else_branch = if_stmt.else_branch
+
+        if _isTruthy(self.evaluate(condition)):
+            self._execute(then_branch)
+        elif else_branch:
+            self._execute(else_branch)
+        return None
 
     def evaluate(self, expr: "Expr"):
         return expr.accept(self)
@@ -161,7 +172,7 @@ class ExpressionInterpreter(Visitor):
     def _execute(self, statement):
         return statement.accept(self)
 
-    def execute_block(self, statements, environment):
+    def execute_block(self, statements):
         previous_env = self.environ
         self.environ = Environment(environment=previous_env)
         try:
