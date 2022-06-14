@@ -52,6 +52,27 @@ class Environment(dict):
     def __init__(self, environment=None):
         self.parent = environment
 
+    def get(self, key):
+        if key in self.keys():
+            return self[key]
+        
+        if self.parent:
+            return self.parent.get(key)
+
+    def define(self, key, value):
+        self[key] = value
+
+    def assign(self, key, value):
+
+        if key in self.keys():
+            self[key] = value
+            return
+
+        if self.parent:
+            return self.parent.assign(key, value)
+
+        raise RuntimeError(f"Variable '{key}' is accessed but it was never defined")
+
     def __getitem__(self, lexeme):
         """
         If the key exists, return it from the current object
@@ -70,7 +91,7 @@ class ExpressionInterpreter(Visitor):
 
     def visit_literal_expr(self, expr: "Expr"):
         return expr.value
-
+    
     def visit_logical_expr(self, expr: "Expr"):
         left = self.evaluate(expr.left)
         if expr.operator == TokenType.OR:
@@ -92,7 +113,7 @@ class ExpressionInterpreter(Visitor):
             if isinstance(left, str):
                 return left + str(right)
             _checkNumberOperands(operator=operator, left=left, right=right)
-            return float(left) + float(right)
+            return left + right
         if operator.type_ == TokenType.MINUS:
             _checkNumberOperands(operator=operator, left=left, right=right)
             return float(left) - float(right)
@@ -137,7 +158,7 @@ class ExpressionInterpreter(Visitor):
         value = self.evaluate(expr.to_assign)
         name = expr.assign_to.lexeme
 
-        self.environ[name] = value
+        self.environ.assign(name, value)
         return value
 
     def visit_print_stmt(self, stmt: "Stmt"):
@@ -146,14 +167,14 @@ class ExpressionInterpreter(Visitor):
         return None
 
     def visit_variable_expr(self, expr: "Expr"):
-        return self.environ[expr.name]
+        return self.environ.get(expr.name)
 
     def visit_expression_stmt(self, stmt: "Stmt"):
         self.evaluate(stmt.expression)
 
     def visit_var_stmt(self, stmt: "Stmt"):
-        expr = self.evaluate(stmt.initialiser)
-        self.environ[stmt.name] = expr
+        value = self.evaluate(stmt.initialiser)
+        self.environ.define(stmt.name, value)
         return None
 
     def visit_block_stmt(self, block: "Stmt"):
@@ -168,6 +189,11 @@ class ExpressionInterpreter(Visitor):
             self._execute(then_branch)
         elif else_branch:
             self._execute(else_branch)
+        return None
+
+    def visit_while_stmt(self, stmt: "Stmt"):
+        while _isTruthy(self.evaluate(stmt.condition)):
+            self._execute(stmt.statement)
         return None
 
     def evaluate(self, expr: "Expr"):
