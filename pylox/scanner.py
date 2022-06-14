@@ -89,9 +89,9 @@ class LoxScanner:
             self.add_token(TokenType.LEFT_PAREN)
         elif char == ")":
             self.add_token(TokenType.RIGHT_PAREN)
-        elif char == "[":
+        elif char == "{":
             self.add_token(TokenType.LEFT_BRACE)
-        elif char == "]":
+        elif char == "}":
             self.add_token(TokenType.RIGHT_BRACE)
         elif char == ",":
             self.add_token(TokenType.COMMA)

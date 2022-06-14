@@ -76,7 +76,7 @@ class LoxIntepreter:
         try:
             statements = parser.parse()
         except ParserError:
-            raise
+            self.had_error = True
         result = None
         if not self.had_error:
             result = self.interpreter.interpret(statements=statements)

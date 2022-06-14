@@ -2,7 +2,7 @@ from typing import List
 
 from pylox.expr import Assign, Binary, Grouping, Literal, Unary, Variable
 from pylox.scanner import LoxToken, error
-from pylox.stmt import Expression, Print, Var
+from pylox.stmt import Expression, Print, Var, Block
 from pylox.tokens import TokenType
 
 
@@ -24,7 +24,8 @@ class Parser:
     ========
     program -> declaration* EOF ;
     declaration -> varDeclaration | statement ;
-    statement -> expressionStmt | printStatement ;
+    statement -> expressionStmt | printStatement | block;
+    block -> "{" declaration* "}" ;
     expressionStmt -> expression ";" ;
     printStatement -> print expression ;
     expression -> assignment ;
@@ -76,24 +77,36 @@ class Parser:
             initialiser = self.expression()
 
         self.consume(
-            type_=TokenType.SEMICOLON, msg="Expect ';' after variable declaration"
+            type_=TokenType.SEMICOLON, msg="Expected ';' after variable declaration"
         )
         return Var(name=name, initialiser=initialiser)
 
     def statement(self):
         if self.match(TokenType.PRINT):
             return self.print_statement()
+        if self.match(TokenType.LEFT_BRACE):
+            return Block(self.block())    
         return self.expression_statement()
+
+    def block(self):
+        """Match a block
+        """
+        statements = []
+        while not self._check(TokenType.RIGHT_BRACE) and (not self.is_at_end()):
+            statements.append(self.declaration())
+        
+        self.consume(TokenType.RIGHT_BRACE, msg="Expected '}' to terminate block expression")
+        return statements
 
     def print_statement(self):
         expr = self.expression()
-        self.consume(type_=TokenType.SEMICOLON, msg="Expect ';' after value")
+        self.consume(type_=TokenType.SEMICOLON, msg="Expected ';' after value")
 
         return Print(expression=expr)
 
     def expression_statement(self):
         expr = self.expression()
-        self.consume(type_=TokenType.SEMICOLON, msg="Expect ';' after expression")
+        self.consume(type_=TokenType.SEMICOLON, msg="Expected ';' after expression")
 
         return Expression(expression=expr)
 
@@ -171,6 +184,7 @@ class Parser:
         return primary
 
     def primary(self):
+        # breakpoint()
         if self.match(TokenType.TRUE):
             return Literal(value="true")
         if self.match(TokenType.FALSE):
@@ -184,7 +198,7 @@ class Parser:
         elif self.match(TokenType.LEFT_PAREN):
             expr = self.expression()
             self.consume(
-                type_=TokenType.RIGHT_PAREN, msg="Expect ')' after left parenthesis"
+                type_=TokenType.RIGHT_PAREN, msg="Expected ')' after left parenthesis"
             )
             return Grouping(expression=expr)
         else:

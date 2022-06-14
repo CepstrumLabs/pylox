@@ -1,8 +1,8 @@
 var a = 1;
 var b = 3;
 
-print "a = 1";
-print "b = 1";
+print "a = " + a;
+print "b = " + b;
 print "a + b = " + (a + b);
 
 var c = a;
@@ -30,3 +30,31 @@ print c;
 c = 5;
 print "var c = 5";
 print c;
+
+a = b;
+print "a = b;";
+
+print ("a=" + a);
+print ("b=" + b);
+
+var b = 1; 
+print ("b = " + b + " In block level 1");
+
+{   
+    
+    {
+        var b = 2; 
+        print ("b = " + b + " In block level 2");
+        {
+            print ("b = " + b + " In block level 2-1");
+        }
+    }
+
+    var b = 3;
+    print ("b = " + b + " In block level 3");
+        {
+            print ("b = " + b + " In block level 3-1");
+        }
+}
+
+

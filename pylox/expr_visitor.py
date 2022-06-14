@@ -33,6 +33,9 @@ class Visitor(ABC):
     def visit_expression_stmt(self, stmt: "Stmt"):
         raise NotImplementedError("Subclasses should implement this method")
 
+    @abstractmethod
+    def visit_block_stmt(self, stmt: "Stmt"):
+        raise NotImplementedError("Subclasses should implement this method")
 
 class AstPrinter:
     def __init__(self):

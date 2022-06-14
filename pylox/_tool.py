@@ -127,6 +127,7 @@ def generate_ast(directory):
         "Expression: Expr expression",
         "Print: Expr expression",
         "Var: Token name, Expr initialiser",
+        "Block: List['Stmt'] statements",
     ]
 
     define_ast(output_dir=output_dir, base_name=base_name, types=TYPES)

@@ -44,9 +44,28 @@ def _runtime_error(msg, line):
     print(msg + " @ [line " + str(line) + "]")
 
 
+class Environment(dict):
+    """
+    Key-value pair holder that has a reference to its parent
+    """
+
+    def __init__(self, environment=None):
+        self.parent = environment
+    
+    def __getitem__(self, lexeme):
+        """
+        If the key exists, return it from the current object
+        If it doesnt, search the parent.
+        If parent doesn't exist 
+        """
+        if self.parent is None or lexeme in self.keys():  # reached the parent
+            return super().__getitem__(lexeme)
+        return self.parent[lexeme]
+
 class ExpressionInterpreter(Visitor):
     def __init__(self):
-        self.environ = {}
+        # self.environ = {}
+        self.environ = Environment()
 
     def visit_literal_expr(self, expr: "Expr"):
         return expr.value
@@ -124,6 +143,9 @@ class ExpressionInterpreter(Visitor):
         expr = self.evaluate(stmt.initialiser)
         self.environ[stmt.name] = expr
         return None
+    
+    def visit_block_stmt(self, block: "Stmt"):
+        self.execute_block(statements=block.statements, environment=self.environ)
 
     def evaluate(self, expr: "Expr"):
         return expr.accept(self)
@@ -137,3 +159,15 @@ class ExpressionInterpreter(Visitor):
 
     def _execute(self, statement):
         return statement.accept(self)
+
+    def execute_block(self, statements, environment):
+        previous_env = self.environ
+        self.environ = Environment(environment=previous_env)
+        try:
+            for statement in statements:
+                self._execute(statement)
+        except LoxRuntimeError as error:
+            _runtime_error(error.msg, error.token.line)
+        finally:
+            self.environ = previous_env
+        
