@@ -35,16 +35,16 @@ def test_scans_right_paren():
     assert tokens == [LoxToken(type_=TokenType.RIGHT_PAREN, lexeme=')', literal=None, line=1)]
 
 def test_scans_left_brace():
-    source = "["
+    source = "{"
     scanner = LoxScanner(source=source)
     tokens = scanner.scan_tokens()
-    assert tokens == [LoxToken(type_=TokenType.LEFT_BRACE, lexeme='[', literal=None, line=1)]
+    assert tokens == [LoxToken(type_=TokenType.LEFT_BRACE, lexeme='{', literal=None, line=1)]
 
 def test_scans_right_brace():
-    source = "]"
+    source = "}"
     scanner = LoxScanner(source=source)
     tokens = scanner.scan_tokens()
-    assert tokens == [LoxToken(type_=TokenType.RIGHT_BRACE, lexeme=']', literal=None, line=1)]
+    assert tokens == [LoxToken(type_=TokenType.RIGHT_BRACE, lexeme='}', literal=None, line=1)]
 
 def test_scans_comma():
     source = ","
@@ -149,7 +149,7 @@ def test_scans_comment():
     assert tokens == [LoxToken(type_=TokenType.LESS, lexeme='<', literal=None, line=2)]
 
 def test_scans_grouping():
-    source = "((()))[]"
+    source = "((())){}"
     scanner = LoxScanner(source=source)
     tokens = scanner.scan_tokens()
     assert tokens == [
@@ -159,8 +159,8 @@ def test_scans_grouping():
         LoxToken(type_=TokenType.RIGHT_PAREN, lexeme=')', literal=None, line=1),
         LoxToken(type_=TokenType.RIGHT_PAREN, lexeme=')', literal=None, line=1),
         LoxToken(type_=TokenType.RIGHT_PAREN, lexeme=')', literal=None, line=1),
-        LoxToken(type_=TokenType.LEFT_BRACE, lexeme='[', literal=None, line=1),
-        LoxToken(type_=TokenType.RIGHT_BRACE, lexeme=']', literal=None, line=1)
+        LoxToken(type_=TokenType.LEFT_BRACE, lexeme='{', literal=None, line=1),
+        LoxToken(type_=TokenType.RIGHT_BRACE, lexeme='}', literal=None, line=1)
     ]
 
 def test_scans_operators():
