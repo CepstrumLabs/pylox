@@ -13,6 +13,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build pylox
         run: make build
+      - name: Language test
+        run: make lang_test
       - name: Test pylox
         run: make test
       - name: Lint pylox
