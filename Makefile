@@ -19,4 +19,7 @@ lint: black isort
 test: build_req
 	pytest -svvvv
 
+lang_test:
+	python -mpylox test_script.lox
+
 all: build lint test lang_test
