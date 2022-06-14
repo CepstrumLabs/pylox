@@ -70,7 +70,7 @@ class ExpressionInterpreter(Visitor):
 
     def visit_literal_expr(self, expr: "Expr"):
         return expr.value
-    
+
     def visit_logical_expr(self, expr: "Expr"):
         left = self.evaluate(expr.left)
         if expr.operator == TokenType.OR:
