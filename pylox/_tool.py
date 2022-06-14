@@ -118,6 +118,7 @@ def generate_ast(directory):
         "Binary: Expr left, Token operator, Expr right",
         "Unary: Token operator, Expr right",
         "Literal: object value",
+        "Logical: Token operator, Expr left, Expr right",
         "Variable: Token name",
         "Grouping: Expr expression",
         "Assign: Token assign_to, Expr to_assign",

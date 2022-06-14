@@ -29,7 +29,7 @@ def _checkNumberOperand(operator, operand):
 
 
 def _isTruthy(object_):
-    if object_ in ("False", "nil", None):
+    if object_ in ("false", "nil", None):
         return False
     if isinstance(object_, bool):
         return bool(object_)
@@ -70,6 +70,17 @@ class ExpressionInterpreter(Visitor):
 
     def visit_literal_expr(self, expr: "Expr"):
         return expr.value
+    
+    def visit_logical_expr(self, expr: "Expr"):
+        left = self.evaluate(expr.left)
+        if expr.operator == TokenType.OR:
+            if _isTruthy(left):
+                return left
+        elif expr.operator == TokenType.AND:
+            if not _isTruthy(left):
+                return left
+
+        return self.evaluate(expr.right)
 
     def visit_binary_expr(self, expr: "Expr"):
         left = self.evaluate(expr.left)
