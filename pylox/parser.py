@@ -2,7 +2,7 @@ from typing import List
 
 from pylox.expr import Assign, Binary, Grouping, Literal, Unary, Variable
 from pylox.scanner import LoxToken, error
-from pylox.stmt import Block, Expression, Print, Var
+from pylox.stmt import Block, Expression, If, Print, Var
 from pylox.tokens import TokenType
 
 
@@ -24,7 +24,8 @@ class Parser:
     ========
     program -> declaration* EOF ;
     declaration -> varDeclaration | statement ;
-    statement -> expressionStmt | printStatement | block;
+    statement -> expressionStmt | printStatement | block | if_stmt;
+    if_stmt -> "if" + "(" expression ")" statement ("else" statement)? ;
     block -> "{" declaration* "}" ;
     expressionStmt -> expression ";" ;
     printStatement -> print expression ;
@@ -86,7 +87,19 @@ class Parser:
             return self.print_statement()
         if self.match(TokenType.LEFT_BRACE):
             return Block(self.block())
+        if self.match(TokenType.IF):
+            return self.if_statement()
         return self.expression_statement()
+
+    def if_statement(self):
+        self.consume(TokenType.LEFT_PAREN, "Expected ( after if keyword")
+        condition = self.expression()
+        self.consume(TokenType.RIGHT_PAREN, "Expected ) after if keyword")
+        then_branch = self.statement()
+        else_branch = None
+        if self.match(TokenType.ELSE):
+            else_branch = self.statement()
+        return If(condition=condition, then_branch=then_branch, else_branch=else_branch)
 
     def block(self):
         """Match a block"""

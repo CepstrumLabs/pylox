@@ -22,4 +22,4 @@ test: build_req
 lang_test:
 	python -mpylox test_script.lox
 
-all: build lint test
+all: build lint test lang_test
