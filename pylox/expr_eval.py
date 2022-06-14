@@ -51,16 +51,17 @@ class Environment(dict):
 
     def __init__(self, environment=None):
         self.parent = environment
-    
+
     def __getitem__(self, lexeme):
         """
         If the key exists, return it from the current object
         If it doesnt, search the parent.
-        If parent doesn't exist 
+        If parent doesn't exist
         """
         if self.parent is None or lexeme in self.keys():  # reached the parent
             return super().__getitem__(lexeme)
         return self.parent[lexeme]
+
 
 class ExpressionInterpreter(Visitor):
     def __init__(self):
@@ -143,7 +144,7 @@ class ExpressionInterpreter(Visitor):
         expr = self.evaluate(stmt.initialiser)
         self.environ[stmt.name] = expr
         return None
-    
+
     def visit_block_stmt(self, block: "Stmt"):
         self.execute_block(statements=block.statements, environment=self.environ)
 
@@ -170,4 +171,3 @@ class ExpressionInterpreter(Visitor):
             _runtime_error(error.msg, error.token.line)
         finally:
             self.environ = previous_env
-        

@@ -2,7 +2,7 @@ from typing import List
 
 from pylox.expr import Assign, Binary, Grouping, Literal, Unary, Variable
 from pylox.scanner import LoxToken, error
-from pylox.stmt import Expression, Print, Var, Block
+from pylox.stmt import Block, Expression, Print, Var
 from pylox.tokens import TokenType
 
 
@@ -85,17 +85,18 @@ class Parser:
         if self.match(TokenType.PRINT):
             return self.print_statement()
         if self.match(TokenType.LEFT_BRACE):
-            return Block(self.block())    
+            return Block(self.block())
         return self.expression_statement()
 
     def block(self):
-        """Match a block
-        """
+        """Match a block"""
         statements = []
         while not self._check(TokenType.RIGHT_BRACE) and (not self.is_at_end()):
             statements.append(self.declaration())
-        
-        self.consume(TokenType.RIGHT_BRACE, msg="Expected '}' to terminate block expression")
+
+        self.consume(
+            TokenType.RIGHT_BRACE, msg="Expected '}' to terminate block expression"
+        )
         return statements
 
     def print_statement(self):
