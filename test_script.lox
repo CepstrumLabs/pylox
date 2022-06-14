@@ -78,3 +78,8 @@ if (b == 2){
 } else {
     print "false";
 }
+
+a = b = c = 3;
+print "a = " + a;
+print "b = " + b;
+print "c = " + c;
