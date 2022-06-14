@@ -22,6 +22,7 @@ class Parser:
 
     Grammar
     ========
+
     program -> declaration* EOF ;
     declaration -> varDeclaration | statement ;
     statement -> expressionStmt | printStatement | block | if_stmt;
@@ -30,7 +31,7 @@ class Parser:
     expressionStmt -> expression ";" ;
     printStatement -> print expression ;
     expression -> assignment ;
-    assignment -> IDENTIFIER "=" equality | equality ;
+    assignment -> IDENTIFIER "=" assignment | equality ;
     equality -> comparison ( ("!=" | "==") comparison)* ;
     comparison -> term ( (">" | ">=" | "<" | "<=") term)* ;
     term -> factor ( ("-" | "+") factor)* ;
@@ -133,7 +134,7 @@ class Parser:
         assign_to = self._previous()
 
         if self.match(TokenType.EQUAL):
-            to_assign = self.equality()
+            to_assign = self.assignment()
             return Assign(assign_to=assign_to, to_assign=to_assign)
 
         return expr
