@@ -1,6 +1,6 @@
 from typing import List
 
-from pylox.expr import Assign, Binary, Grouping, Literal, Unary, Variable
+from pylox.expr import Assign, Binary, Grouping, Literal, Logical, Unary, Variable
 from pylox.scanner import LoxToken, error
 from pylox.stmt import Block, Expression, If, Print, Var
 from pylox.tokens import TokenType
@@ -30,13 +30,19 @@ class Parser:
     block -> "{" declaration* "}" ;
     expressionStmt -> expression ";" ;
     printStatement -> print expression ;
+
     expression -> assignment ;
-    assignment -> IDENTIFIER "=" assignment | equality ;
+    assignment -> IDENTIFIER "=" assignment | logic_or ;
+
+    logic_or -> logic_and ( "or" logic_and )* ;
+    logic_and -> equality ( "and" logic_and )* ;
+
     equality -> comparison ( ("!=" | "==") comparison)* ;
     comparison -> term ( (">" | ">=" | "<" | "<=") term)* ;
     term -> factor ( ("-" | "+") factor)* ;
     factor -> unary ( ("*" | "/") unary)* ;
     unary ->("!" | "-") unary | primary ;
+
     primary -> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
     '''
     A parser has two responsibilities:
@@ -129,7 +135,7 @@ class Parser:
         return self.assignment()
 
     def assignment(self):
-        expr = self.equality()
+        expr = self.logic_or()
 
         assign_to = self._previous()
 
@@ -137,6 +143,23 @@ class Parser:
             to_assign = self.assignment()
             return Assign(assign_to=assign_to, to_assign=to_assign)
 
+        return expr
+
+    def logic_or(self):
+        expr = self.logic_and()
+
+        while self.match(TokenType.OR):
+            right = self.logic_and()
+            expr = Logical(operator=TokenType.OR, left=expr, right=right)
+
+        return expr
+
+    def logic_and(self):
+        expr = self.equality()
+
+        while self.match(TokenType.AND):
+            right = self.logic_and()
+            expr = Logical(operator=TokenType.AND, left=expr, right=right)
         return expr
 
     def equality(self):

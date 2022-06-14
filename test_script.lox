@@ -83,3 +83,24 @@ a = b = c = 3;
 print "a = " + a;
 print "b = " + b;
 print "c = " + c;
+
+var d = (b > 30) or 5;
+
+print "var d = (b > 30) or 5;";
+print "d = " + d;
+
+if ("hello" and "world") {
+    print "hello world";
+}
+
+if ("hello" or "world") {
+    print "hello world";
+}
+
+if (false and "hello") {
+    print "hello world";
+}
+
+if (false or "hello") {
+    print "hello world";
+}
