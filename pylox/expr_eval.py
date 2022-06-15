@@ -55,7 +55,7 @@ class Environment(dict):
     def get(self, key):
         if key in self.keys():
             return self[key]
-        
+
         if self.parent:
             return self.parent.get(key)
 
@@ -91,7 +91,7 @@ class ExpressionInterpreter(Visitor):
 
     def visit_literal_expr(self, expr: "Expr"):
         return expr.value
-    
+
     def visit_logical_expr(self, expr: "Expr"):
         left = self.evaluate(expr.left)
         if expr.operator == TokenType.OR:

@@ -102,10 +102,16 @@ class Parser:
         return self.expression_statement()
 
     def while_statement(self):
-        """ "(" expression ")" statement; """
-        self.consume(TokenType.LEFT_PAREN, msg="parenthesis required for the condition of a while statement")
-        condition = self.expression();
-        self.consume(TokenType.RIGHT_PAREN, msg="parenthesis required for the condition of a while statement")
+        """ "(" expression ")" statement;"""
+        self.consume(
+            TokenType.LEFT_PAREN,
+            msg="parenthesis required for the condition of a while statement",
+        )
+        condition = self.expression()
+        self.consume(
+            TokenType.RIGHT_PAREN,
+            msg="parenthesis required for the condition of a while statement",
+        )
         statement = self.statement()
         return While(condition=condition, statement=statement)
 
