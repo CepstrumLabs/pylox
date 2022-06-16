@@ -104,3 +104,9 @@ if (false and "hello") {
 if (false or "hello") {
     print "hello world";
 }
+
+var loop = 1;
+while (loop!=10 ) {
+    print("looped " + loop + " times");
+    loop = loop + 1;
+}

@@ -2,7 +2,7 @@ from typing import List
 
 from pylox.expr import Assign, Binary, Grouping, Literal, Logical, Unary, Variable
 from pylox.scanner import LoxToken, error
-from pylox.stmt import Block, Expression, If, Print, Var
+from pylox.stmt import Block, Expression, If, Print, Var, While
 from pylox.tokens import TokenType
 
 
@@ -25,8 +25,9 @@ class Parser:
 
     program -> declaration* EOF ;
     declaration -> varDeclaration | statement ;
-    statement -> expressionStmt | printStatement | block | if_stmt;
+    statement -> expressionStmt | printStatement | block | if_stmt | while_stmt;
     if_stmt -> "if" + "(" expression ")" statement ("else" statement)? ;
+    while_stmt -> "while" + "(" expression ")" statement;
     block -> "{" declaration* "}" ;
     expressionStmt -> expression ";" ;
     printStatement -> print expression ;
@@ -96,7 +97,23 @@ class Parser:
             return Block(self.block())
         if self.match(TokenType.IF):
             return self.if_statement()
+        if self.match(TokenType.WHILE):
+            return self.while_statement()
         return self.expression_statement()
+
+    def while_statement(self):
+        """ "(" expression ")" statement;"""
+        self.consume(
+            TokenType.LEFT_PAREN,
+            msg="parenthesis required for the condition of a while statement",
+        )
+        condition = self.expression()
+        self.consume(
+            TokenType.RIGHT_PAREN,
+            msg="parenthesis required for the condition of a while statement",
+        )
+        statement = self.statement()
+        return While(condition=condition, statement=statement)
 
     def if_statement(self):
         self.consume(TokenType.LEFT_PAREN, "Expected ( after if keyword")
@@ -222,7 +239,6 @@ class Parser:
         return primary
 
     def primary(self):
-        # breakpoint()
         if self.match(TokenType.TRUE):
             return Literal(value="true")
         if self.match(TokenType.FALSE):

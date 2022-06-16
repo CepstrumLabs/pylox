@@ -134,6 +134,7 @@ def generate_ast(directory):
         "Var: Token name, Expr initialiser",
         "Block: List[Stmt] statements",
         "If: Expr condition, Stmt then_branch, Stmt else_branch",
+        "While: Expr condition, Stmt statement",
     ]
 
     define_ast(output_dir=output_dir, base_name=base_name, types=TYPES, imports=imports)
