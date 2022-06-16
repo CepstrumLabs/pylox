@@ -1,3 +1,4 @@
+from tabnanny import check
 from typing import List
 
 from pylox.expr import Assign, Binary, Grouping, Literal, Logical, Unary, Variable
@@ -25,9 +26,10 @@ class Parser:
 
     program -> declaration* EOF ;
     declaration -> varDeclaration | statement ;
-    statement -> expressionStmt | printStatement | block | if_stmt | while_stmt;
+    statement -> expressionStmt | printStatement | block | if_stmt | while_stmt | for_stmt ;
     if_stmt -> "if" + "(" expression ")" statement ("else" statement)? ;
     while_stmt -> "while" + "(" expression ")" statement;
+    for_stmt -> "for" + "(" ( varDeclaration | expressionStmt | ";" ) +  expression? ";" + expression? ")" statement ;
     block -> "{" declaration* "}" ;
     expressionStmt -> expression ";" ;
     printStatement -> print expression ;
@@ -99,13 +101,75 @@ class Parser:
             return self.if_statement()
         if self.match(TokenType.WHILE):
             return self.while_statement()
+        if self.match(TokenType.FOR):
+            return self.for_stmt()
         return self.expression_statement()
 
-    def while_statement(self):
-        """ "(" expression ")" statement;"""
+    def for_stmt(self):
+        """Parse a "for" statement:
+
+        Rule:
+            for_stmt -> "for" + "(" ( varDeclaration | expressionStmt | ";" ) +
+                expression? ";" +
+                expression? ")" statement ;
+        """
         self.consume(
             TokenType.LEFT_PAREN,
-            msg="parenthesis required for the condition of a while statement",
+            msg="left parenthesis required for the condition of a 'for' statement",
+        )
+        initialiser = None
+        condition = None
+        increment = None
+
+        if self.match(TokenType.SEMICOLON):
+            initialiser = None
+
+        if self.match(TokenType.VAR):
+            initialiser = self.var_declaration()
+        else:
+            initialiser = self.expression_statement()
+
+        if not self._check(TokenType.SEMICOLON):
+            condition = self.expression()
+
+        self.consume(
+            TokenType.SEMICOLON, msg="semicolon required after for loop condition"
+        )
+
+        if not self._check(TokenType.RIGHT_PAREN):
+            increment = self.expression()
+
+        self.consume(
+            TokenType.RIGHT_PAREN,
+            msg="right parenthesis required for the condition of a 'for' statement",
+        )
+
+        body = self.statement()
+
+        if increment is not None:
+            increment = Expression(expression=increment)
+            body = Block(statements=[body, increment])
+
+        if condition is None:
+            condition = Literal("true")
+
+        body = While(condition=condition, statement=body)
+
+        if initialiser is not None:
+            body = Block(statements=[initialiser, body])
+
+        print(body)
+        return body
+
+    def while_statement(self):
+        """Parse a "while" statement:
+
+        Rule:
+            while_stmt -> "while" + "(" expression ")" statement ;
+        """
+        self.consume(
+            TokenType.LEFT_PAREN,
+            msg="parenthesis required for the condition of a 'while' statement",
         )
         condition = self.expression()
         self.consume(

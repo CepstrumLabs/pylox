@@ -56,7 +56,7 @@ class Environment(dict):
         if key in self.keys():
             return self[key]
 
-        if self.parent:
+        if self.parent is not None:
             return self.parent.get(key)
 
     def define(self, key, value):
@@ -68,7 +68,7 @@ class Environment(dict):
             self[key] = value
             return
 
-        if self.parent:
+        if self.parent is not None:
             return self.parent.assign(key, value)
 
         raise RuntimeError(f"Variable '{key}' is accessed but it was never defined")
@@ -86,7 +86,6 @@ class Environment(dict):
 
 class ExpressionInterpreter(Visitor):
     def __init__(self):
-        # self.environ = {}
         self.environ = Environment()
 
     def visit_literal_expr(self, expr: "Expr"):
@@ -212,6 +211,7 @@ class ExpressionInterpreter(Visitor):
     def execute_block(self, statements):
         previous_env = self.environ
         self.environ = Environment(environment=previous_env)
+        # breakpoint()
         try:
             for statement in statements:
                 self._execute(statement)
