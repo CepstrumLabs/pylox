@@ -211,7 +211,6 @@ class ExpressionInterpreter(Visitor):
     def execute_block(self, statements):
         previous_env = self.environ
         self.environ = Environment(environment=previous_env)
-        # breakpoint()
         try:
             for statement in statements:
                 self._execute(statement)

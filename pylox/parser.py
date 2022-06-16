@@ -158,7 +158,6 @@ class Parser:
         if initialiser is not None:
             body = Block(statements=[initialiser, body])
 
-        print(body)
         return body
 
     def while_statement(self):
