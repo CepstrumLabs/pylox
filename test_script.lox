@@ -129,4 +129,8 @@ fun twice(num){
     return 2*num;
 }
 
-print(twice(4));
+fun half(num) {
+    return num / 2;
+}
+
+print(half(twice(4)));

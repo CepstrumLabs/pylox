@@ -25,7 +25,4 @@ class Environment(dict):
             self[key] = value
             return
 
-        if self.parent is not None:
-            return self.parent.assign(key, value)
-
         raise RuntimeError(f"Variable '{key}' is accessed but it was never defined")
