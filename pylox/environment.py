@@ -29,13 +29,3 @@ class Environment(dict):
             return self.parent.assign(key, value)
 
         raise RuntimeError(f"Variable '{key}' is accessed but it was never defined")
-
-    def __getitem__(self, lexeme):
-        """
-        If the key exists, return it from the current object
-        If it doesnt, search the parent.
-        If parent doesn't exist
-        """
-        if self.parent is None or lexeme in self.keys():  # reached the parent
-            return super().__getitem__(lexeme)
-        return self.parent[lexeme]
