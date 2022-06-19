@@ -28,7 +28,7 @@ class Parser:
     declaration -> varDeclaration | statement | func_declaration ;
     func_declaration -> "fun" + "(" parameters? ")" block ;
     parameters -> IDENTIFIER ("," IDENTIFIER) ;
-    statement -> expressionStmt | printStatement | block | if_stmt | while_stmt | for_stmt ;
+    statement -> expressionStmt | printStatement | block | if_stmt | while_stmt | for_stmt;
     if_stmt -> "if" + "(" expression ")" statement ("else" statement)? ;
     while_stmt -> "while" + "(" expression ")" statement;
     for_stmt -> "for" + "(" ( varDeclaration | expressionStmt | ";" ) +  expression? ";" + expression? ")" statement ;

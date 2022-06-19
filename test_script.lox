@@ -124,3 +124,9 @@ fun hello(name) {
 }
 
 hello("World");
+
+fun twice(num){
+    return 2*num;
+}
+
+print(twice(4));
