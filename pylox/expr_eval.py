@@ -1,11 +1,13 @@
 from typing import List
 
 from pylox.expr_visitor import Expr, Visitor
+from pylox.function import LoxFunction
+from pylox.environment import Environment
 from pylox.tokens import TokenType
 
 
 class LoxRuntimeError(Exception):
-    def __init__(self, token, msg):
+    def __init__(self, token=None, msg=None):
         self.token = token
         self.msg = msg
 
@@ -44,49 +46,14 @@ def _runtime_error(msg, line):
     print(msg + " @ [line " + str(line) + "]")
 
 
-class Environment(dict):
-    """
-    Key-value pair holder that has a reference to its parent
-    """
-
-    def __init__(self, environment=None):
-        self.parent = environment
-
-    def get(self, key):
-        if key in self.keys():
-            return self[key]
-
-        if self.parent is not None:
-            return self.parent.get(key)
-
-    def define(self, key, value):
-        self[key] = value
-
-    def assign(self, key, value):
-
-        if key in self.keys():
-            self[key] = value
-            return
-
-        if self.parent is not None:
-            return self.parent.assign(key, value)
-
-        raise RuntimeError(f"Variable '{key}' is accessed but it was never defined")
-
-    def __getitem__(self, lexeme):
-        """
-        If the key exists, return it from the current object
-        If it doesnt, search the parent.
-        If parent doesn't exist
-        """
-        if self.parent is None or lexeme in self.keys():  # reached the parent
-            return super().__getitem__(lexeme)
-        return self.parent[lexeme]
-
-
 class ExpressionInterpreter(Visitor):
+
     def __init__(self):
         self.environ = Environment()
+
+    @property
+    def globals(self):
+        return self.environ
 
     def visit_literal_expr(self, expr: "Expr"):
         return expr.value
@@ -164,9 +131,17 @@ class ExpressionInterpreter(Visitor):
         expr = self.evaluate(stmt.expression)
         print(expr)
         return None
+    
+    def visit_function_stmt(self, stmt: "Function"):
+        function = LoxFunction(stmt=stmt)
+        self.environ.define(stmt.name.name.lexeme, function)
 
     def visit_variable_expr(self, expr: "Expr"):
-        return self.environ.get(expr.name)
+        try:
+            value = self.environ.get(expr.name.lexeme)
+        except KeyError:
+            raise LoxRuntimeError(token=expr.name, msg=f"Token {expr.name.lexeme} is not defined")
+        return value
 
     def visit_expression_stmt(self, stmt: "Stmt"):
         self.evaluate(stmt.expression)
@@ -195,6 +170,19 @@ class ExpressionInterpreter(Visitor):
             self._execute(stmt.statement)
         return None
 
+    def visit_call_expr(self, expr: "Expr"):
+        try:
+            callee = self.evaluate(expr.callee)
+        except KeyError:
+            callee = None
+        arguments = []
+
+        for argument in expr.arguments:
+            arguments.append(self.evaluate(argument))
+        if not isinstance(callee, LoxFunction):
+            raise LoxRuntimeError(msg="you can only call functions")
+        return callee.call(self, arguments)
+
     def evaluate(self, expr: "Expr"):
         return expr.accept(self)
 
@@ -208,9 +196,9 @@ class ExpressionInterpreter(Visitor):
     def _execute(self, statement):
         return statement.accept(self)
 
-    def execute_block(self, statements):
+    def execute_block(self, statements, env=None):
         previous_env = self.environ
-        self.environ = Environment(environment=previous_env)
+        self.environ = env if env else Environment(environment=previous_env)
         try:
             for statement in statements:
                 self._execute(statement)

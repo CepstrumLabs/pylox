@@ -114,3 +114,13 @@ while (loop!=10 ) {
 for (var loop = 1; loop != 10; loop = loop + 1) {
     print("looped on for loop " + loop + " times");
 }
+
+fun myfun(arg) { print arg; }
+
+myfun(10);
+
+fun hello(name) {
+    print("Hello " + name + "!");
+}
+
+hello("World");
