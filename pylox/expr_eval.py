@@ -1,5 +1,6 @@
 from typing import List
 
+from pylox.callable import ReturnVal
 from pylox.environment import Environment
 from pylox.expr_visitor import Expr, Visitor
 from pylox.function import LoxFunction
@@ -132,7 +133,7 @@ class ExpressionInterpreter(Visitor):
         return None
 
     def visit_function_stmt(self, stmt: "Function"):
-        function = LoxFunction(stmt=stmt)
+        function = LoxFunction(stmt=stmt, closure=self.environ)
         self.environ.define(stmt.name.name.lexeme, function)
 
     def visit_variable_expr(self, expr: "Expr"):
@@ -184,6 +185,13 @@ class ExpressionInterpreter(Visitor):
             raise LoxRuntimeError(msg="you can only call functions")
         return callee.call(self, arguments)
 
+    def visit_return_stmt(self, stmt: "Stmt"):
+        value = None
+
+        if stmt.value is not None:
+            value = self.evaluate(stmt.value)
+            raise ReturnVal(value=value)
+
     def evaluate(self, expr: "Expr"):
         return expr.accept(self)
 
@@ -199,7 +207,7 @@ class ExpressionInterpreter(Visitor):
 
     def execute_block(self, statements, env=None):
         previous_env = self.environ
-        self.environ = env if env else Environment(environment=previous_env)
+        self.environ = env if env else self.environ
         try:
             for statement in statements:
                 self._execute(statement)

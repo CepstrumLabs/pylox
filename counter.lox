@@ -1,0 +1,20 @@
+
+fun makeCounter() {
+ 
+    var i = 0;
+
+    fun count() {
+        i = i + 1;
+        print i;
+    }
+
+    return count;
+}
+
+var counter = makeCounter();
+counter();
+counter();
+
+for (var j=1; j< 10; j=j+1) {
+    counter();
+}

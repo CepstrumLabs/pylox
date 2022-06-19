@@ -3,7 +3,7 @@ from typing import List
 
 from pylox.expr import Assign, Binary, Call, Grouping, Literal, Logical, Unary, Variable
 from pylox.scanner import LoxToken, error
-from pylox.stmt import Block, Expression, Function, If, Print, Var, While
+from pylox.stmt import Block, Expression, Function, If, Print, Return, Var, While
 from pylox.tokens import TokenType
 
 
@@ -28,7 +28,8 @@ class Parser:
     declaration -> varDeclaration | statement | func_declaration ;
     func_declaration -> "fun" + "(" parameters? ")" block ;
     parameters -> IDENTIFIER ("," IDENTIFIER) ;
-    statement -> expressionStmt | printStatement | block | if_stmt | while_stmt | for_stmt;
+    statement -> expressionStmt | printStatement | block | if_stmt | while_stmt | for_stmt | return_stmt ;
+    return_stmt -> "return" expression? ";" ;
     if_stmt -> "if" + "(" expression ")" statement ("else" statement)? ;
     while_stmt -> "while" + "(" expression ")" statement;
     for_stmt -> "for" + "(" ( varDeclaration | expressionStmt | ";" ) +  expression? ";" + expression? ")" statement ;
@@ -134,7 +135,17 @@ class Parser:
             return self.while_statement()
         if self.match(TokenType.FOR):
             return self.for_stmt()
+        if self.match(TokenType.RETURN):
+            return self.return_stmt()
         return self.expression_statement()
+
+    def return_stmt(self):
+        keyword = self._previous()
+        if not self._check(TokenType.SEMICOLON):
+            value = self.expression()
+        self.consume(TokenType.SEMICOLON, msg="expect semicolon after return statement")
+
+        return Return(keyword=keyword, value=value)
 
     def for_stmt(self):
         """Parse a "for" statement:
