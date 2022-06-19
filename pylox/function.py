@@ -1,10 +1,9 @@
-from pylox.environment import Environment
 from pylox.callable import LoxCallable
+from pylox.environment import Environment
 from pylox.stmt import Function
 
 
 class LoxFunction(LoxCallable):
-
     def __init__(self, stmt: Function):
         self.declaration = stmt
 
@@ -17,4 +16,3 @@ class LoxFunction(LoxCallable):
 
         interpreter.execute_block(self.declaration.body, env=environment)
         return None
-

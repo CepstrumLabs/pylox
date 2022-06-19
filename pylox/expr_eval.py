@@ -1,8 +1,8 @@
 from typing import List
 
+from pylox.environment import Environment
 from pylox.expr_visitor import Expr, Visitor
 from pylox.function import LoxFunction
-from pylox.environment import Environment
 from pylox.tokens import TokenType
 
 
@@ -47,7 +47,6 @@ def _runtime_error(msg, line):
 
 
 class ExpressionInterpreter(Visitor):
-
     def __init__(self):
         self.environ = Environment()
 
@@ -131,7 +130,7 @@ class ExpressionInterpreter(Visitor):
         expr = self.evaluate(stmt.expression)
         print(expr)
         return None
-    
+
     def visit_function_stmt(self, stmt: "Function"):
         function = LoxFunction(stmt=stmt)
         self.environ.define(stmt.name.name.lexeme, function)
@@ -140,7 +139,9 @@ class ExpressionInterpreter(Visitor):
         try:
             value = self.environ.get(expr.name.lexeme)
         except KeyError:
-            raise LoxRuntimeError(token=expr.name, msg=f"Token {expr.name.lexeme} is not defined")
+            raise LoxRuntimeError(
+                token=expr.name, msg=f"Token {expr.name.lexeme} is not defined"
+            )
         return value
 
     def visit_expression_stmt(self, stmt: "Stmt"):

@@ -1,5 +1,3 @@
-
-
 class Environment(dict):
     """
     Key-value pair holder that has a reference to its parent
@@ -14,7 +12,7 @@ class Environment(dict):
 
         if self.parent is not None:
             return self.parent.get(key)
-            
+
         else:
             raise KeyError(f"{key} is not defined")
 

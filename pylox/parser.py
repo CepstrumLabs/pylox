@@ -1,9 +1,9 @@
 from tabnanny import check
 from typing import List
 
-from pylox.expr import Assign, Binary, Grouping, Literal, Logical, Unary, Variable, Call
+from pylox.expr import Assign, Binary, Call, Grouping, Literal, Logical, Unary, Variable
 from pylox.scanner import LoxToken, error
-from pylox.stmt import Block, Expression, If, Print, Var, While, Function
+from pylox.stmt import Block, Expression, Function, If, Print, Var, While
 from pylox.tokens import TokenType
 
 
@@ -105,15 +105,21 @@ class Parser:
         """
         name = self.identifier()
 
-        self.consume(TokenType.LEFT_PAREN, "left parenthesis is required after function declaration")
+        self.consume(
+            TokenType.LEFT_PAREN,
+            "left parenthesis is required after function declaration",
+        )
         parameters = []
         if not self._check(TokenType.RIGHT_PAREN):
             parameters.append(self.identifier())
             while self.match(TokenType.COMMA):
                 parameters.append(self.identifiier())
-        self.consume(TokenType.RIGHT_PAREN, "right parenthesis is required after function declaration")
+        self.consume(
+            TokenType.RIGHT_PAREN,
+            "right parenthesis is required after function declaration",
+        )
 
-        self.consume(TokenType.LEFT_BRACE, "expected starting '{'" +  f" in func {name}")
+        self.consume(TokenType.LEFT_BRACE, "expected starting '{'" + f" in func {name}")
         body = self.block()
         return Function(name=name, body=body, params=parameters)
 
@@ -334,12 +340,11 @@ class Parser:
                 break
         return expression
 
-
     def _finish_call(self, callee):
         arguments = []
         if not self._check(TokenType.RIGHT_PAREN):
             arguments.append(self.expression())
-            
+
             while self.match(TokenType.COMMA):
                 arguments.append(self.expression())
 
