@@ -1,9 +1,9 @@
 from tabnanny import check
 from typing import List
 
-from pylox.expr import Assign, Binary, Grouping, Literal, Logical, Unary, Variable
+from pylox.expr import Assign, Binary, Call, Grouping, Literal, Logical, Unary, Variable
 from pylox.scanner import LoxToken, error
-from pylox.stmt import Block, Expression, If, Print, Var, While
+from pylox.stmt import Block, Expression, Function, If, Print, Var, While
 from pylox.tokens import TokenType
 
 
@@ -25,14 +25,16 @@ class Parser:
     ========
 
     program -> declaration* EOF ;
-    declaration -> varDeclaration | statement ;
-    statement -> expressionStmt | printStatement | block | if_stmt | while_stmt | for_stmt ;
+    declaration -> varDeclaration | statement | func_declaration ;
+    func_declaration -> "fun" + "(" parameters? ")" block ;
+    parameters -> IDENTIFIER ("," IDENTIFIER) ;
+    statement -> expressionStmt | printStatement | block | if_stmt | while_stmt | for_stmt;
     if_stmt -> "if" + "(" expression ")" statement ("else" statement)? ;
     while_stmt -> "while" + "(" expression ")" statement;
     for_stmt -> "for" + "(" ( varDeclaration | expressionStmt | ";" ) +  expression? ";" + expression? ")" statement ;
     block -> "{" declaration* "}" ;
     expressionStmt -> expression ";" ;
-    printStatement -> print expression ;
+    printStatement -> print expression ";" ;
 
     expression -> assignment ;
     assignment -> IDENTIFIER "=" assignment | logic_or ;
@@ -44,8 +46,9 @@ class Parser:
     comparison -> term ( (">" | ">=" | "<" | "<=") term)* ;
     term -> factor ( ("-" | "+") factor)* ;
     factor -> unary ( ("*" | "/") unary)* ;
-    unary ->("!" | "-") unary | primary ;
-
+    unary ->("!" | "-") unary | call ;
+    call -> primary ("(" arguments ")")*
+    arguments -> expression ( "," expression)*
     primary -> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
     '''
     A parser has two responsibilities:
@@ -73,7 +76,10 @@ class Parser:
         try:
             if self.match(TokenType.VAR):
                 return self.var_declaration()
+            elif self.match(TokenType.FUN):
+                return self.func_declaration()
             return self.statement()
+
         except ParserError as e:
             error(line=self.line, message=e.message)
             raise e
@@ -91,6 +97,31 @@ class Parser:
             type_=TokenType.SEMICOLON, msg="Expected ';' after variable declaration"
         )
         return Var(name=name, initialiser=initialiser)
+
+    def func_declaration(self):
+        """
+        func_declaration -> "fun" IDENTIFIER "(" parameters? ")" block ;
+        parameters -> IDENTIFIER ("," IDENTIFIER)* ;
+        """
+        name = self.identifier()
+
+        self.consume(
+            TokenType.LEFT_PAREN,
+            "left parenthesis is required after function declaration",
+        )
+        parameters = []
+        if not self._check(TokenType.RIGHT_PAREN):
+            parameters.append(self.identifier())
+            while self.match(TokenType.COMMA):
+                parameters.append(self.identifiier())
+        self.consume(
+            TokenType.RIGHT_PAREN,
+            "right parenthesis is required after function declaration",
+        )
+
+        self.consume(TokenType.LEFT_BRACE, "expected starting '{'" + f" in func {name}")
+        body = self.block()
+        return Function(name=name, body=body, params=parameters)
 
     def statement(self):
         if self.match(TokenType.PRINT):
@@ -202,7 +233,6 @@ class Parser:
     def print_statement(self):
         expr = self.expression()
         self.consume(type_=TokenType.SEMICOLON, msg="Expected ';' after value")
-
         return Print(expression=expr)
 
     def expression_statement(self):
@@ -298,8 +328,33 @@ class Parser:
             right = self.unary()
             return Unary(operator=operator, right=right)
 
-        primary = self.primary()
-        return primary
+        call = self.call()
+        return call
+
+    def call(self):
+        expression = self.primary()
+        while True:
+            if self.match(TokenType.LEFT_PAREN):
+                expression = self._finish_call(callee=expression)
+            else:
+                break
+        return expression
+
+    def _finish_call(self, callee):
+        arguments = []
+        if not self._check(TokenType.RIGHT_PAREN):
+            arguments.append(self.expression())
+
+            while self.match(TokenType.COMMA):
+                arguments.append(self.expression())
+
+        self.consume(TokenType.RIGHT_PAREN, "unclosed parenthesis in function call")
+        call = Call(callee=callee, arguments=arguments)
+        return call
+
+    def identifier(self):
+        if self.match(TokenType.IDENTIFIER):
+            return Variable(name=self._previous())
 
     def primary(self):
         if self.match(TokenType.TRUE):
@@ -311,7 +366,7 @@ class Parser:
         if self.match(TokenType.NUMBER, TokenType.STRING):
             return Literal(value=self._previous().literal)
         if self.match(TokenType.IDENTIFIER):
-            return Variable(name=self._previous().lexeme)
+            return Variable(name=self._previous())
         elif self.match(TokenType.LEFT_PAREN):
             expr = self.expression()
             self.consume(
