@@ -4,8 +4,8 @@ import sys
 from pylox.expr_eval import ExpressionInterpreter as Interpreter
 from pylox.parser import Parser as LoxParser
 from pylox.parser import ParserError
+from pylox.resolver import CompilerError, Resolver
 from pylox.scanner import LoxScanner
-from pylox.resolver import Resolver, CompilerError
 
 LOGO = r"""
   _     _____  __
@@ -78,8 +78,8 @@ class LoxIntepreter:
             statements = parser.parse()
         except ParserError:
             self.had_error = True
-        
-        try: 
+
+        try:
             resolver.resolve_all(statements)
         except CompilerError:
             self.had_error = True

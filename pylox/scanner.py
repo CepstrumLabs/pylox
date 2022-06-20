@@ -48,6 +48,7 @@ class LoxToken:
     def __hash__(self):
         return hash((self.type_, self.lexeme, self.literal))
 
+
 class LoxScanner:
     def __init__(self, source):
         self.source = source

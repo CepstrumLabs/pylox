@@ -1,4 +1,5 @@
 from typing import List, Union
+
 from pylox.visitor import Visitor
 
 
@@ -12,6 +13,7 @@ class Resolver(Visitor):
     """
     Resolve variables in the tokens
     """
+
     def __init__(self, interpreter):
         self.interpreter = interpreter
         self.scopes = []
@@ -22,7 +24,7 @@ class Resolver(Visitor):
 
     def resolve(self, statement: Union["Stmt", "Expr"]):
         statement.accept(self)
-    
+
     def begin_scope(self):
         self.scopes.append({})
 
@@ -52,20 +54,20 @@ class Resolver(Visitor):
         self.begin_scope()
         self.resolve_all(stmt.statements)
         self.end_scope()
-    
-    def visit_logical_expr(self, expr: 'Expr'):
+
+    def visit_logical_expr(self, expr: "Expr"):
         self.resolve(expr.left)
         self.resolve(expr.right)
-    
-    def visit_assign_expr(self, expr: 'Expr'):
+
+    def visit_assign_expr(self, expr: "Expr"):
         self.resolve(expr.to_assign)
         self.resolve_local(expr, expr.assign_to)
 
-    def visit_function_stmt(self, stmt: 'Stmt'):
+    def visit_function_stmt(self, stmt: "Stmt"):
         self.declare(stmt.name)
         self.define(stmt.name)
         self._resolve_function(statement=stmt)
-    
+
     def _resolve_function(self, statement):
         self.begin_scope()
         for param in statement.params:
@@ -74,7 +76,7 @@ class Resolver(Visitor):
         self.resolve_all(statement.body)
         self.end_scope()
 
-    def visit_variable_expr(self, expr: 'Expr'):
+    def visit_variable_expr(self, expr: "Expr"):
         if self.scopes and self.scopes[-1] is False:
             raise CompilerError("Can't read local variable in its own initializer")
         self.resolve_local(expr, expr.name)
@@ -85,42 +87,44 @@ class Resolver(Visitor):
             if name in self.scopes[i].keys():
                 self.interpreter.resolve(expr, len(self.scopes) - 1 - i)
 
-    def visit_var_stmt(self, stmt: 'Stmt'):
+    def visit_var_stmt(self, stmt: "Stmt"):
         self.declare(stmt.name)
         if stmt.initialiser is not None:
             self.resolve(stmt.initialiser)
         self.define(stmt.name)
         return None
-    
+
     def declare(self, name):
-        if not self.scopes: return
-        
+        if not self.scopes:
+            return
+
         # Get the last scope
         scope = self.scopes[-1]
         scope[name] = False
 
     def define(self, name):
-        if not self.scopes: return
-        
+        if not self.scopes:
+            return
+
         # Get the last scope
         scope = self.scopes[-1]
         scope[name] = True
 
-    def visit_if_stmt(self, stmt: 'Stmt'):
+    def visit_if_stmt(self, stmt: "Stmt"):
         self.resolve(stmt.condition)
         self.resolve(stmt.then_branch)
         if stmt.else_branch:
             self.resolve(stmt.else_branch)
-    
-    def visit_while_stmt(self, stmt: 'Stmt'):
+
+    def visit_while_stmt(self, stmt: "Stmt"):
         self.resolve(stmt.condition)
         self.resolve(stmt.statement)
-    
-    def visit_call_expr(self, expr: 'Expr'):
+
+    def visit_call_expr(self, expr: "Expr"):
         self.resolve(expr.callee)
         for argument in expr.arguments:
             self.resolve(argument)
-    
-    def visit_return_stmt(self, stmt: 'Stmt'):
+
+    def visit_return_stmt(self, stmt: "Stmt"):
         if stmt.value != None:
             self.resolve(stmt.value)

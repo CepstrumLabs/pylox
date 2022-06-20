@@ -69,6 +69,7 @@ def define_type(parent_class_name, class_name, fields):
     source += _add_hash_method(class_name, field_defs)
     return source
 
+
 def _add_hash_method(class_name, field_defs):
     source = TAB + "def __hash__(self):" + NEWLINE
     return_line = 2 * TAB + "return hash(("
@@ -76,6 +77,7 @@ def _add_hash_method(class_name, field_defs):
         return_line += "self.%s," % (field_def[1])
     return_line += "))"
     return source + return_line + 2 * NEWLINE
+
 
 def _add_eq_method(class_name, field_defs):
     source = TAB + "def __eq__(self, other):" + NEWLINE
