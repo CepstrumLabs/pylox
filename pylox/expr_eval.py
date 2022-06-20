@@ -129,9 +129,9 @@ class ExpressionInterpreter(Visitor):
         name = expr.assign_to.lexeme
 
         distance = self.locals.get(expr)
-
+        breakpoint()
         if distance is not None:
-            self.environment.assign_at(distance, name, value)
+            self.environ.assign_at(distance, name, value)
         self.environ.assign(name, value)
         return value
 
