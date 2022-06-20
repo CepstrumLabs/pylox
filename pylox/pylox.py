@@ -2,10 +2,10 @@ import pathlib
 import sys
 
 from pylox.expr_eval import ExpressionInterpreter as Interpreter
-from pylox.expr_visitor import AstPrinter
 from pylox.parser import Parser as LoxParser
 from pylox.parser import ParserError
 from pylox.scanner import LoxScanner
+from pylox.resolver import Resolver, CompilerError
 
 LOGO = r"""
   _     _____  __
@@ -73,11 +73,20 @@ class LoxIntepreter:
         scanner = LoxScanner(source=source)
         tokens = scanner.scan_tokens()
         parser = LoxParser(tokens=tokens)
+        resolver = Resolver(interpreter=self.interpreter)
         try:
             statements = parser.parse()
         except ParserError:
             self.had_error = True
+        
+        try: 
+            resolver.resolve_all(statements)
+        except CompilerError:
+            self.had_error = True
+
         result = None
+
         if not self.had_error:
             result = self.interpreter.interpret(statements=statements)
+
         return result

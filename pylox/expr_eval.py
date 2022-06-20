@@ -2,7 +2,7 @@ from typing import List
 
 from pylox.callable import ReturnVal
 from pylox.environment import Environment
-from pylox.expr_visitor import Expr, Visitor
+from pylox.visitor import Expr, Visitor
 from pylox.function import LoxFunction
 from pylox.tokens import TokenType
 
@@ -48,12 +48,17 @@ def _runtime_error(msg, line):
 
 
 class ExpressionInterpreter(Visitor):
+
     def __init__(self):
         self.environ = Environment()
+        self.locals = {}
 
     @property
     def globals(self):
         return self.environ
+
+    def resolve(self, expr: "Expr", depth: int):
+        self.locals[expr] = depth
 
     def visit_literal_expr(self, expr: "Expr"):
         return expr.value
@@ -124,6 +129,10 @@ class ExpressionInterpreter(Visitor):
         value = self.evaluate(expr.to_assign)
         name = expr.assign_to.lexeme
 
+        distance  = self.locals.get(expr)
+
+        if distance is not None:
+            self.environment.assign_at(distance, name, value)
         self.environ.assign(name, value)
         return value
 
@@ -137,13 +146,23 @@ class ExpressionInterpreter(Visitor):
         self.environ.define(stmt.name.name.lexeme, function)
 
     def visit_variable_expr(self, expr: "Expr"):
+        value = None
         try:
-            value = self.environ.get(expr.name.lexeme)
+            value = self._look_up_variable(expr.name, expr)
+            # value = self.environ.get(expr.name.lexeme)
         except KeyError:
             raise LoxRuntimeError(
                 token=expr.name, msg=f"Token {expr.name.lexeme} is not defined"
             )
         return value
+
+    def _look_up_variable(self, name, expression):
+        distance = self.locals.get(expression)
+        if distance is not None:
+            value = self.environ.get_at(distance, name.lexeme)
+            return value
+        
+        return self.environ.get(name.lexeme)
 
     def visit_expression_stmt(self, stmt: "Stmt"):
         self.evaluate(stmt.expression)

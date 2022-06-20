@@ -37,7 +37,6 @@ class LoxToken:
             (self.type_ == other.type_)
             and (self.lexeme == other.lexeme)
             and (self.literal == other.literal)
-            and (self.line == other.line)
         )
 
     def __str__(self):
@@ -46,6 +45,8 @@ class LoxToken:
     def __repr__(self):
         return f"{self.__class__.__name__}(type={self.type_}, lexeme='{self.lexeme}', literal={self.literal}, line={self.line})"
 
+    def __hash__(self):
+        return hash((self.type_, self.lexeme, self.literal))
 
 class LoxScanner:
     def __init__(self, source):
