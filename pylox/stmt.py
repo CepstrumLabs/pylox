@@ -79,7 +79,7 @@ class Block(Stmt):
         return visitor.visit_block_stmt(self)
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(statements={self.statements})"
+        return f"{self.__class__.__name__}(stmts={self.statements})"
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.statements == other.statements

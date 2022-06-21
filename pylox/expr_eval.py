@@ -1,3 +1,4 @@
+import copy
 from typing import List
 
 from pylox.callable import ReturnVal
@@ -49,15 +50,10 @@ def _runtime_error(msg, line):
 
 class ExpressionInterpreter(Visitor):
     def __init__(self):
-        self.environ = Environment()
+        self.globals = Environment()
+        self.environ = self.globals
+
         self.locals = {}
-
-    @property
-    def globals(self):
-        return self.environ
-
-    def resolve(self, expr: "Expr", depth: int):
-        self.locals[expr] = depth
 
     def visit_literal_expr(self, expr: "Expr"):
         return expr.value
@@ -127,12 +123,11 @@ class ExpressionInterpreter(Visitor):
     def visit_assign_expr(self, expr: "Expr"):
         value = self.evaluate(expr.to_assign)
         name = expr.assign_to.lexeme
-
         distance = self.locals.get(expr)
-        breakpoint()
         if distance is not None:
             self.environ.assign_at(distance, name, value)
-        self.environ.assign(name, value)
+        else:
+            self.globals.assign(name, value)
         return value
 
     def visit_print_stmt(self, stmt: "Stmt"):
@@ -155,12 +150,13 @@ class ExpressionInterpreter(Visitor):
         return value
 
     def _look_up_variable(self, name, expression):
+        # print(f"_look_up_variable: name={name}, expression={expression}")
         distance = self.locals.get(expression)
         if distance is not None:
             value = self.environ.get_at(distance, name.lexeme)
             return value
-
-        return self.environ.get(name.lexeme)
+        # print(f"_look_up_variable: getting {name.lexeme} from globals")
+        return self.globals.get(name.lexeme)
 
     def visit_expression_stmt(self, stmt: "Stmt"):
         self.evaluate(stmt.expression)
@@ -171,7 +167,8 @@ class ExpressionInterpreter(Visitor):
         return None
 
     def visit_block_stmt(self, block: "Stmt"):
-        self.execute_block(statements=block.statements)
+        block_env = Environment(environment=self.environ)
+        self.execute_block(statements=block.statements, env=block_env)
 
     def visit_if_stmt(self, if_stmt: "Stmt"):
         condition = if_stmt.condition
@@ -222,13 +219,19 @@ class ExpressionInterpreter(Visitor):
     def _execute(self, statement):
         return statement.accept(self)
 
-    def execute_block(self, statements, env=None):
+    def execute_block(self, statements, env):
         previous_env = self.environ
-        self.environ = env if env else self.environ
+
         try:
+            self.environ = env
             for statement in statements:
                 self._execute(statement)
         except LoxRuntimeError as error:
             _runtime_error(error.msg, error.token.line)
+            raise
         finally:
             self.environ = previous_env
+
+    def resolve(self, expr: "Expr", depth: int):
+        # print(f"resolve: expr={expr}, depth={depth}")
+        self.locals[expr] = depth

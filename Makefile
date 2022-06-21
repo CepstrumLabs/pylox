@@ -23,8 +23,8 @@ lang_test:
 	python -mpylox test_script.lox
 	echo "Running the fib.lox source code..."
 	python -mpylox fib.lox
-	echo "Running the counter.lox source code..."
-	python -mpylox counter.lox
+	# echo "Running the counter.lox source code..."
+	# python -mpylox counter.lox
 
 ci: test lang_test
 

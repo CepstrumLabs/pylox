@@ -74,6 +74,7 @@ class LoxIntepreter:
         tokens = scanner.scan_tokens()
         parser = LoxParser(tokens=tokens)
         resolver = Resolver(interpreter=self.interpreter)
+        statements = []
         try:
             statements = parser.parse()
         except ParserError:
@@ -83,7 +84,7 @@ class LoxIntepreter:
             resolver.resolve_all(statements)
         except CompilerError:
             self.had_error = True
-
+        print("passed")
         result = None
 
         if not self.had_error:

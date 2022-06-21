@@ -190,7 +190,7 @@ class Parser:
 
         if increment is not None:
             increment = Expression(expression=increment)
-            body = Block(statements=[body, increment])
+            body = Block([body, increment])
 
         if condition is None:
             condition = Literal("true")

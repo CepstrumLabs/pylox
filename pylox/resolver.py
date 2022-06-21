@@ -23,12 +23,15 @@ class Resolver(Visitor):
             self.resolve(statement=statement)
 
     def resolve(self, statement: Union["Stmt", "Expr"]):
+        # print(f"Resolving {statement}")
         statement.accept(self)
 
     def begin_scope(self):
+        # print("begin_scope")
         self.scopes.append({})
 
     def end_scope(self):
+        # print("end_scope")
         self.scopes.pop()
 
     def visit_literal_expr(self, expr: "Expr"):
@@ -77,15 +80,17 @@ class Resolver(Visitor):
         self.end_scope()
 
     def visit_variable_expr(self, expr: "Expr"):
-        if self.scopes and self.scopes[-1] is False:
+        if self.scopes and self.scopes[-1].get(expr.name.lexeme) is False:
             raise CompilerError("Can't read local variable in its own initializer")
         self.resolve_local(expr, expr.name)
         return None
 
     def resolve_local(self, expr: "Expr", name: "Token"):
+        # print(f"resolve_local expr={expr}, token={name}")
         for i in range(len(self.scopes) - 1, -1, -1):
-            if name in self.scopes[i].keys():
+            if name.lexeme in self.scopes[i].keys():
                 self.interpreter.resolve(expr, len(self.scopes) - 1 - i)
+                return
 
     def visit_var_stmt(self, stmt: "Stmt"):
         self.declare(stmt.name)
