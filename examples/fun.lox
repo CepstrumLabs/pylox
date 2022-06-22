@@ -1,3 +1,2 @@
 fun myfun(arg) { print arg; }
-
 myfun(10);

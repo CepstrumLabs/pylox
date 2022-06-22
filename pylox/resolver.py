@@ -68,16 +68,17 @@ class Resolver(Visitor):
         self.resolve_local(expr, expr.assign_to)
 
     def visit_function_stmt(self, stmt: "Stmt"):
-        self.declare(stmt.name)
-        self.define(stmt.name)
+        
+        self.declare(stmt.name.name.lexeme)
+        self.define(stmt.name.name.lexeme)
         self._resolve_function(statement=stmt)
 
     def _resolve_function(self, statement):
         self.begin_scope()
 
         for param in statement.params:
-            self.declare(param)
-            self.define(param)
+            self.declare(param.name.lexeme)
+            self.define(param.name.lexeme)
         
         self.resolve_all(statement.body)
         self.end_scope()
@@ -91,6 +92,7 @@ class Resolver(Visitor):
     def resolve_local(self, expr: "Expr", name: "Token"):
         logger.debug(f"resolve_local: expr={expr}, token={name}")
         for i in range(len(self.scopes) - 1, -1, -1):
+            
             if name.lexeme in self.scopes[i].keys():
                 logger.debug(f"resolve_local: resolve {name} at {len(self.scopes) - 1 - i} ")
                 self.interpreter.resolve(expr, len(self.scopes) - 1 - i)
@@ -109,6 +111,7 @@ class Resolver(Visitor):
 
         # Get the last scope
         scope = self.scopes[-1]
+        
         scope[name] = False
         logger.debug(f"declare: scope={scope}")
 
