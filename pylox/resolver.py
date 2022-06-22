@@ -8,12 +8,12 @@ class CompilerError(Exception):
     """
     Represents all errors that can occur in the Resolver
     """
-    
 
 
 class FunctionType:
     NONE = "NONE"
     FUNCTION = "FUNCTION"
+
 
 class Resolver(Visitor):
     """
@@ -80,10 +80,10 @@ class Resolver(Visitor):
 
     def _resolve_function(self, statement, function_type):
         self.begin_scope()
-        
+
         enclosing_function = self.current_function
         self.current_function = function_type
-        
+
         for param in statement.params:
             self.declare(param.name.lexeme)
             self.define(param.name.lexeme)

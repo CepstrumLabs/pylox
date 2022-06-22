@@ -82,7 +82,7 @@ class LoxIntepreter:
         except ParserError:
             self.had_error = True
         logger.debug("Finished parsing")
-        
+
         try:
             resolver.resolve_all(statements)
         except CompilerError as e:
