@@ -122,6 +122,7 @@ class ExpressionInterpreter(Visitor):
         return self.evaluate(expr.expression)
 
     def visit_assign_expr(self, expr: "Expr"):
+        
         value = self.evaluate(expr.to_assign)
         name = expr.assign_to.lexeme
         distance = self.locals.get(expr)
@@ -153,7 +154,6 @@ class ExpressionInterpreter(Visitor):
     def _look_up_variable(self, name, expression):
         logger.debug(f"_look_up_variable: name={name}, expression={expression}")
         distance = self.locals.get(expression)
-        # breakpoint()
         if distance is not None:
             value = self.environ.get_at(distance, name.lexeme)
             return value

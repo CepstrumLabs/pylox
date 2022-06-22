@@ -26,27 +26,30 @@ class UnterminatedLine(Exception):
 
 
 class LoxToken:
-    def __init__(self, type_: TokenType, lexeme: str, literal: str, line: int):
+    def __init__(self, type_: TokenType, lexeme: str, literal: str, line: int, offset: int):
         self.type_ = type_
         self.lexeme = lexeme
         self.literal = literal
         self.line = line
+        self.offset = offset
 
     def __eq__(self, other):
         return (
             (self.type_ == other.type_)
             and (self.lexeme == other.lexeme)
             and (self.literal == other.literal)
+            and (self.line == other.line)
+            and (self.offset == other.offset)
         )
 
     def __str__(self):
         return self.__repr__()
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(type={self.type_}, lexeme='{self.lexeme}', literal={self.literal}, line={self.line})"
+        return f"{self.__class__.__name__}(type={self.type_}, lexeme='{self.lexeme}', literal={self.literal}, line={self.line}, offset={self.offset})"
 
     def __hash__(self):
-        return hash((self.type_, self.lexeme, self.literal))
+        return hash((self.type_, self.lexeme, self.literal, self.line, self.offset))
 
 
 class LoxScanner:
@@ -77,7 +80,7 @@ class LoxScanner:
 
     def _add_token(self, type_, literal):
         text = self.source[self._start : self._current]
-        token = LoxToken(type_=type_, lexeme=text, literal=literal, line=self._line)
+        token = LoxToken(type_=type_, lexeme=text, literal=literal, line=self._line, offset=self._start)
         self.tokens.append(token)
 
     def scan_token(self):

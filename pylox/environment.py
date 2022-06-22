@@ -24,7 +24,7 @@ class Environment(dict):
 
     def assign_at(self, distance, key, value):
         logger.debug(f"assign_at: depth={distance}, key={key}, value={value}")
-        self.ancestor(distance)[key] = value
+        self.ancestor(distance).assign(key=key, value=value)
 
     def ancestor(self, depth):
         i = 0

@@ -74,22 +74,24 @@ class Resolver(Visitor):
 
     def _resolve_function(self, statement):
         self.begin_scope()
+
         for param in statement.params:
             self.declare(param)
             self.define(param)
+        
         self.resolve_all(statement.body)
         self.end_scope()
 
     def visit_variable_expr(self, expr: "Expr"):
         if self.scopes and self.scopes[-1].get(expr.name.lexeme) is False:
             raise CompilerError("Can't read local variable in its own initializer")
-        self.resolve_local(expr, expr.name.lexeme)
+        self.resolve_local(expr, expr.name)
         return None
 
     def resolve_local(self, expr: "Expr", name: "Token"):
         logger.debug(f"resolve_local: expr={expr}, token={name}")
         for i in range(len(self.scopes) - 1, -1, -1):
-            if expr in self.scopes[i].keys():
+            if name.lexeme in self.scopes[i].keys():
                 logger.debug(f"resolve_local: resolve {name} at {len(self.scopes) - 1 - i} ")
                 self.interpreter.resolve(expr, len(self.scopes) - 1 - i)
                 return

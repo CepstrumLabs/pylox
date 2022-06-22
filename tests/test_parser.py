@@ -7,17 +7,17 @@ from pylox.parser import Parser
 from pylox.stmt import Expression, Stmt, Print
 
 
-def create_number_token(value, line=1):
+def create_number_token(value, line=1, offset=0):
     assert isinstance(value, (int, float)), f'Can\'t create number token with value {value}'
-    return LoxToken(type_=TokenType.NUMBER, lexeme=f'{value}', literal=value, line=line)
+    return LoxToken(type_=TokenType.NUMBER, lexeme=f'{value}', literal=value, line=line, offset=offset)
 
-def create_string_token(value, line=1):
+def create_string_token(value, line=1, offset=0):
     assert isinstance(value, str), f'Can\'t create string token with value {value}'
-    return LoxToken(type_=TokenType.STRING, lexeme=f'{value}', literal=value, line=line)
+    return LoxToken(type_=TokenType.STRING, lexeme=f'{value}', literal=value, line=line, offset=offset)
 
-def create_token(type_, line=1):
+def create_token(type_, line=1, offset=0):
     lexeme = TokenType.TOKENS_TO_LEXEMES[type_]
-    return LoxToken(type_=type_, lexeme=lexeme, literal=None, line=line)
+    return LoxToken(type_=type_, lexeme=lexeme, literal=None, line=line, offset=offset)
 
 def create_literal(value):
     return Literal(value=value)
@@ -34,7 +34,7 @@ class TestParser:
         Ensure that an expression is parsed as expected
         """
         value = 123
-        tokens = [create_number_token(value=value), create_token(type_=TokenType.SEMICOLON)]
+        tokens = [create_number_token(value=value, offset=0), create_token(type_=TokenType.SEMICOLON, offset=3)]
         expected = [Expression(expression=create_literal(value=value))]
         parser = pylox.Parser(tokens=tokens)
         expr = parser.parse()
