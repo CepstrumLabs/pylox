@@ -2,6 +2,7 @@ import copy
 from typing import List
 
 from pylox.callable import ReturnVal
+from pylox.logging import logger
 from pylox.environment import Environment
 from pylox.function import LoxFunction
 from pylox.tokens import TokenType
@@ -150,13 +151,13 @@ class ExpressionInterpreter(Visitor):
         return value
 
     def _look_up_variable(self, name, expression):
-        print(f"_look_up_variable: name={name}, expression={expression}")
+        logger.debug(f"_look_up_variable: name={name}, expression={expression}")
         distance = self.locals.get(expression)
         # breakpoint()
         if distance is not None:
             value = self.environ.get_at(distance, name.lexeme)
             return value
-        print(f"_look_up_variable: getting {name.lexeme} from globals")
+        logger.debug(f"_look_up_variable: getting {name.lexeme} from globals")
         return self.globals.get(name.lexeme)
 
     def visit_expression_stmt(self, stmt: "Stmt"):
@@ -234,6 +235,5 @@ class ExpressionInterpreter(Visitor):
             self.environ = previous_env
 
     def resolve(self, expr: "Expr", depth: int):
-        print(f"resolve: expr={expr}, depth={depth}")
-        breakpoint()
+        logger.debug(f"resolve: expr={expr}, depth={depth}")
         self.locals[expr] = depth

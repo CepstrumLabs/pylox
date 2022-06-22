@@ -1,3 +1,5 @@
+from pylox.logging import logger
+
 class Environment(dict):
     """
     Key-value pair holder that has a reference to its parent
@@ -17,11 +19,11 @@ class Environment(dict):
             raise KeyError(f"{key} is not defined")
 
     def get_at(self, depth: int, key):
-        print(f"get_at: depth={depth}, key={key}")
+        logger.debug(f"get_at: depth={depth}, key={key}")
         return self.ancestor(depth)[key]
 
     def assign_at(self, distance, key, value):
-        print(f"assign_at: depth={distance}, key={key}, value={value}")
+        logger.debug(f"assign_at: depth={distance}, key={key}, value={value}")
         self.ancestor(distance)[key] = value
 
     def ancestor(self, depth):

@@ -1,0 +1,3 @@
+for (var loop = 1; loop != 10; loop = loop + 1) {
+    print("looped on for loop " + loop + " times");
+}

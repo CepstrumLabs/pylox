@@ -1,6 +1,7 @@
 from typing import List, Union
 
 from pylox.visitor import Visitor
+from pylox.logging import logger
 
 
 class CompilerError(Exception):
@@ -23,15 +24,15 @@ class Resolver(Visitor):
             self.resolve(statement=statement)
 
     def resolve(self, statement: Union["Stmt", "Expr"]):
-        print(f"Resolving {statement}")
+        logger.debug(f"Resolving {statement}")
         statement.accept(self)
 
     def begin_scope(self):
-        print("begin_scope")
+        logger.debug("begin_scope")
         self.scopes.append({})
 
     def end_scope(self):
-        print("end_scope")
+        logger.debug("end_scope")
         self.scopes.pop()
 
     def visit_literal_expr(self, expr: "Expr"):
@@ -86,11 +87,10 @@ class Resolver(Visitor):
         return None
 
     def resolve_local(self, expr: "Expr", name: "Token"):
-        print(f"resolve_local: expr={expr}, token={name}")
-        print(expr, id(expr))
+        logger.debug(f"resolve_local: expr={expr}, token={name}")
         for i in range(len(self.scopes) - 1, -1, -1):
             if expr in self.scopes[i].keys():
-                print(f"resolve_local: resolve {name.lexeme} at {len(self.scopes) - 1 - i} ")
+                logger.debug(f"resolve_local: resolve {name} at {len(self.scopes) - 1 - i} ")
                 self.interpreter.resolve(expr, len(self.scopes) - 1 - i)
                 return
 
@@ -107,9 +107,8 @@ class Resolver(Visitor):
 
         # Get the last scope
         scope = self.scopes[-1]
-        breakpoint()
         scope[name] = False
-        print(f"declare: scope={scope}")
+        logger.debug(f"declare: scope={scope}")
 
     def define(self, name):
         if not self.scopes:
@@ -118,8 +117,7 @@ class Resolver(Visitor):
         # Get the last scope
         scope = self.scopes[-1]
         scope[name] = True
-        print(name, id(name))
-        print(f"define: scope={scope}")
+        logger.debug(f"define: scope={scope}")
 
     def visit_if_stmt(self, stmt: "Stmt"):
         self.resolve(stmt.condition)

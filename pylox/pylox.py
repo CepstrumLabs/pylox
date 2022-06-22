@@ -2,6 +2,7 @@ import pathlib
 import sys
 
 from pylox.expr_eval import ExpressionInterpreter as Interpreter
+from pylox.logging import logger
 from pylox.parser import Parser as LoxParser
 from pylox.parser import ParserError
 from pylox.resolver import CompilerError, Resolver
@@ -80,15 +81,16 @@ class LoxIntepreter:
             statements = parser.parse()
         except ParserError:
             self.had_error = True
-
+        logger.debug("Finished parsing")
         try:
             resolver.resolve_all(statements)
         except CompilerError:
             self.had_error = True
-        print("passed")
+        logger.debug("Finished resolving")
         result = None
 
         if not self.had_error:
             result = self.interpreter.interpret(statements=statements)
+        logger.debug("Finished interpreting")
 
         return result

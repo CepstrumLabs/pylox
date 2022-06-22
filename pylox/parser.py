@@ -1,4 +1,3 @@
-from tabnanny import check
 from typing import List
 
 from pylox.expr import Assign, Binary, Call, Grouping, Literal, Logical, Unary, Variable
