@@ -96,5 +96,4 @@ class LoxIntepreter:
         else:
             print("Compiler error: " + str(self.error))
         logger.debug("Finished interpreting")
-
         return result

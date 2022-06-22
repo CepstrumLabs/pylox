@@ -19,15 +19,14 @@ test: build_req
 	pytest -svvvv
 
 lang_test:
-	echo "Running Generic language test script..."
 	python -mpylox examples/test_script.lox
-	echo "Testing fibonnaci implementation..."
 	python -mpylox examples/fib.lox
-	echo "Testing functions..."
 	python -mpylox examples/fun.lox
-	echo "Testing function closures..."
 	python -mpylox examples/counter.lox
 	python -mpylox examples/scoping_error.lox
+	python -mpylox examples/bad_return.lox
+	python -mpylox examples/bad.lox
+	python -mpylox examples/bad_assignment.lox
 
 ci: test lang_test
 
