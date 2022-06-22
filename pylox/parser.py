@@ -1,4 +1,3 @@
-from tabnanny import check
 from typing import List
 
 from pylox.expr import Assign, Binary, Call, Grouping, Literal, Logical, Unary, Variable
@@ -190,7 +189,7 @@ class Parser:
 
         if increment is not None:
             increment = Expression(expression=increment)
-            body = Block(statements=[body, increment])
+            body = Block([body, increment])
 
         if condition is None:
             condition = Literal("true")
@@ -410,8 +409,13 @@ class Parser:
         try:
             return self._tokens[self.current]
         except IndexError:
+            previous_offset = self._tokens[self.current - 1].offset
             return LoxToken(
-                type_=TokenType.EOF, lexeme="\0", literal=None, line=self.line
+                type_=TokenType.EOF,
+                lexeme="\0",
+                literal=None,
+                line=self.line,
+                offset=previous_offset,
             )
 
     def advance(self):
