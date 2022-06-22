@@ -2,9 +2,9 @@ import copy
 from typing import List
 
 from pylox.callable import ReturnVal
-from pylox.logging import logger
 from pylox.environment import Environment
 from pylox.function import LoxFunction
+from pylox.logging import logger
 from pylox.tokens import TokenType
 from pylox.visitor import Expr, Visitor
 
@@ -122,7 +122,7 @@ class ExpressionInterpreter(Visitor):
         return self.evaluate(expr.expression)
 
     def visit_assign_expr(self, expr: "Expr"):
-        
+
         value = self.evaluate(expr.to_assign)
         name = expr.assign_to.lexeme
         distance = self.locals.get(expr)

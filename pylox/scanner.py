@@ -26,7 +26,9 @@ class UnterminatedLine(Exception):
 
 
 class LoxToken:
-    def __init__(self, type_: TokenType, lexeme: str, literal: str, line: int, offset: int):
+    def __init__(
+        self, type_: TokenType, lexeme: str, literal: str, line: int, offset: int
+    ):
         self.type_ = type_
         self.lexeme = lexeme
         self.literal = literal
@@ -80,7 +82,13 @@ class LoxScanner:
 
     def _add_token(self, type_, literal):
         text = self.source[self._start : self._current]
-        token = LoxToken(type_=type_, lexeme=text, literal=literal, line=self._line, offset=self._start)
+        token = LoxToken(
+            type_=type_,
+            lexeme=text,
+            literal=literal,
+            line=self._line,
+            offset=self._start,
+        )
         self.tokens.append(token)
 
     def scan_token(self):

@@ -73,7 +73,7 @@ class LoxIntepreter:
         """
         scanner = LoxScanner(source=source)
         tokens = scanner.scan_tokens()
-        
+
         parser = LoxParser(tokens=tokens)
         resolver = Resolver(interpreter=self.interpreter)
         statements = []

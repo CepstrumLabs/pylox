@@ -1,5 +1,6 @@
 from pylox.logging import logger
 
+
 class Environment(dict):
     """
     Key-value pair holder that has a reference to its parent

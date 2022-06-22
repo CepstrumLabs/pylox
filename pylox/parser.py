@@ -411,7 +411,11 @@ class Parser:
         except IndexError:
             previous_offset = self._tokens[self.current - 1].offset
             return LoxToken(
-                type_=TokenType.EOF, lexeme="\0", literal=None, line=self.line, offset=previous_offset
+                type_=TokenType.EOF,
+                lexeme="\0",
+                literal=None,
+                line=self.line,
+                offset=previous_offset,
             )
 
     def advance(self):
