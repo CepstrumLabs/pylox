@@ -11,6 +11,10 @@ class CompilerError(Exception):
     
 
 
+class FunctionType:
+    NONE = "NONE"
+    FUNCTION = "FUNCTION"
+
 class Resolver(Visitor):
     """
     Resolve variables in the tokens
@@ -18,6 +22,7 @@ class Resolver(Visitor):
 
     def __init__(self, interpreter):
         self.interpreter = interpreter
+        self.current_function = FunctionType.NONE
         self.scopes = []
 
     def resolve_all(self, statements: List[Union["Stmt", "Expr"]]):
@@ -69,20 +74,23 @@ class Resolver(Visitor):
         self.resolve_local(expr, expr.assign_to)
 
     def visit_function_stmt(self, stmt: "Stmt"):
-
         self.declare(stmt.name.name.lexeme)
         self.define(stmt.name.name.lexeme)
-        self._resolve_function(statement=stmt)
+        self._resolve_function(statement=stmt, function_type=FunctionType.FUNCTION)
 
-    def _resolve_function(self, statement):
+    def _resolve_function(self, statement, function_type):
         self.begin_scope()
-
+        
+        enclosing_function = self.current_function
+        self.current_function = function_type
+        
         for param in statement.params:
             self.declare(param.name.lexeme)
             self.define(param.name.lexeme)
 
         self.resolve_all(statement.body)
         self.end_scope()
+        self.current_function = enclosing_function
 
     def visit_variable_expr(self, expr: "Expr"):
         if self.scopes and self.scopes[-1].get(expr.name.lexeme) is False:
@@ -144,5 +152,7 @@ class Resolver(Visitor):
             self.resolve(argument)
 
     def visit_return_stmt(self, stmt: "Stmt"):
+        if self.current_function is FunctionType.NONE:
+            raise CompilerError("Cannot return outside of a function")
         if stmt.value != None:
             self.resolve(stmt.value)
