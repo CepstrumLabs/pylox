@@ -31,5 +31,8 @@ lang_test:
 
 ci: test lang_test
 
+clean:
+	rm -rf *.pyc *.egg-info *.log build dist __pycache__
+
 all: build lint test lang_test
 
