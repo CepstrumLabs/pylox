@@ -20,12 +20,6 @@ class Expression(Stmt):
     def __repr__(self):
         return f"{self.__class__.__name__}(expression={self.expression})"
 
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.expression == other.expression
-
-    def __hash__(self):
-        return hash((self.expression,))
-
 
 class Print(Stmt):
     def __init__(self, expression: "Expr"):
@@ -36,12 +30,6 @@ class Print(Stmt):
 
     def __repr__(self):
         return f"{self.__class__.__name__}(expression={self.expression})"
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.expression == other.expression
-
-    def __hash__(self):
-        return hash((self.expression,))
 
 
 class Var(Stmt):
@@ -55,22 +43,6 @@ class Var(Stmt):
     def __repr__(self):
         return f"{self.__class__.__name__}(name={self.name}, initialiser={self.initialiser})"
 
-    def __eq__(self, other):
-        return (
-            isinstance(other, self.__class__)
-            and self.name == other.name
-            and self.initialiser == other.initialiser
-        )
-
-    def __hash__(self):
-        return hash(
-            (
-                self.name,
-                self.initialiser,
-            )
-        )
-
-
 class Block(Stmt):
     def __init__(self, statements: "List[Stmt]"):
         self.statements = statements
@@ -80,12 +52,6 @@ class Block(Stmt):
 
     def __repr__(self):
         return f"{self.__class__.__name__}(stmts={self.statements})"
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.statements == other.statements
-
-    def __hash__(self):
-        return hash((self.statements,))
 
 
 class If(Stmt):
@@ -100,23 +66,6 @@ class If(Stmt):
     def __repr__(self):
         return f"{self.__class__.__name__}(condition={self.condition}, then_branch={self.then_branch}, else_branch={self.else_branch})"
 
-    def __eq__(self, other):
-        return (
-            isinstance(other, self.__class__)
-            and self.condition == other.condition
-            and self.then_branch == other.then_branch
-            and self.else_branch == other.else_branch
-        )
-
-    def __hash__(self):
-        return hash(
-            (
-                self.condition,
-                self.then_branch,
-                self.else_branch,
-            )
-        )
-
 
 class While(Stmt):
     def __init__(self, condition: "Expr", statement: "Stmt"):
@@ -128,21 +77,6 @@ class While(Stmt):
 
     def __repr__(self):
         return f"{self.__class__.__name__}(condition={self.condition}, statement={self.statement})"
-
-    def __eq__(self, other):
-        return (
-            isinstance(other, self.__class__)
-            and self.condition == other.condition
-            and self.statement == other.statement
-        )
-
-    def __hash__(self):
-        return hash(
-            (
-                self.condition,
-                self.statement,
-            )
-        )
 
 
 class Function(Stmt):
@@ -157,22 +91,6 @@ class Function(Stmt):
     def __repr__(self):
         return f"{self.__class__.__name__}(name={self.name}, body={self.body}, params={self.params})"
 
-    def __eq__(self, other):
-        return (
-            isinstance(other, self.__class__)
-            and self.name == other.name
-            and self.body == other.body
-            and self.params == other.params
-        )
-
-    def __hash__(self):
-        return hash(
-            (
-                self.name,
-                self.body,
-                self.params,
-            )
-        )
 
 
 class Return(Stmt):
@@ -185,18 +103,3 @@ class Return(Stmt):
 
     def __repr__(self):
         return f"{self.__class__.__name__}(keyword={self.keyword}, value={self.value})"
-
-    def __eq__(self, other):
-        return (
-            isinstance(other, self.__class__)
-            and self.keyword == other.keyword
-            and self.value == other.value
-        )
-
-    def __hash__(self):
-        return hash(
-            (
-                self.keyword,
-                self.value,
-            )
-        )

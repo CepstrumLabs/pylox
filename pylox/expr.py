@@ -20,22 +20,6 @@ class Binary(Expr):
     def __repr__(self):
         return f"{self.__class__.__name__}(left={self.left}, operator={self.operator}, right={self.right})"
 
-    def __eq__(self, other):
-        return (
-            isinstance(other, self.__class__)
-            and self.left == other.left
-            and self.operator == other.operator
-            and self.right == other.right
-        )
-
-    def __hash__(self):
-        return hash(
-            (
-                self.left,
-                self.operator,
-                self.right,
-            )
-        )
 
 
 class Unary(Expr):
@@ -51,21 +35,6 @@ class Unary(Expr):
             f"{self.__class__.__name__}(operator={self.operator}, right={self.right})"
         )
 
-    def __eq__(self, other):
-        return (
-            isinstance(other, self.__class__)
-            and self.operator == other.operator
-            and self.right == other.right
-        )
-
-    def __hash__(self):
-        return hash(
-            (
-                self.operator,
-                self.right,
-            )
-        )
-
 
 class Literal(Expr):
     def __init__(self, value: "object"):
@@ -76,12 +45,6 @@ class Literal(Expr):
 
     def __repr__(self):
         return f"{self.__class__.__name__}(value={self.value})"
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.value == other.value
-
-    def __hash__(self):
-        return hash((self.value,))
 
 
 class Logical(Expr):
@@ -96,23 +59,6 @@ class Logical(Expr):
     def __repr__(self):
         return f"{self.__class__.__name__}(operator={self.operator}, left={self.left}, right={self.right})"
 
-    def __eq__(self, other):
-        return (
-            isinstance(other, self.__class__)
-            and self.operator == other.operator
-            and self.left == other.left
-            and self.right == other.right
-        )
-
-    def __hash__(self):
-        return hash(
-            (
-                self.operator,
-                self.left,
-                self.right,
-            )
-        )
-
 
 class Variable(Expr):
     def __init__(self, name: "Token"):
@@ -124,12 +70,6 @@ class Variable(Expr):
     def __repr__(self):
         return f"{self.__class__.__name__}(name={self.name})"
 
-    # def __eq__(self, other):
-    #     return isinstance(other, self.__class__) and self.name == other.name
-
-    # def __hash__(self):
-    #     return hash((self.name,))
-
 
 class Grouping(Expr):
     def __init__(self, expression: "Expr"):
@@ -140,12 +80,6 @@ class Grouping(Expr):
 
     def __repr__(self):
         return f"{self.__class__.__name__}(expression={self.expression})"
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.expression == other.expression
-
-    def __hash__(self):
-        return hash((self.expression,))
 
 
 class Assign(Expr):
@@ -159,21 +93,6 @@ class Assign(Expr):
     def __repr__(self):
         return f"{self.__class__.__name__}(assign_to={self.assign_to}, to_assign={self.to_assign})"
 
-    def __eq__(self, other):
-        return (
-            isinstance(other, self.__class__)
-            and self.assign_to == other.assign_to
-            and self.to_assign == other.to_assign
-        )
-
-    def __hash__(self):
-        return hash(
-            (
-                self.assign_to,
-                self.to_assign,
-            )
-        )
-
 
 class Call(Expr):
     def __init__(self, callee: "Expr", arguments: "List[Expr]"):
@@ -185,18 +104,3 @@ class Call(Expr):
 
     def __repr__(self):
         return f"{self.__class__.__name__}(callee={self.callee}, arguments={self.arguments})"
-
-    def __eq__(self, other):
-        return (
-            isinstance(other, self.__class__)
-            and self.callee == other.callee
-            and self.arguments == other.arguments
-        )
-
-    def __hash__(self):
-        return hash(
-            (
-                self.callee,
-                self.arguments,
-            )
-        )

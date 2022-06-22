@@ -23,15 +23,15 @@ class Resolver(Visitor):
             self.resolve(statement=statement)
 
     def resolve(self, statement: Union["Stmt", "Expr"]):
-        # print(f"Resolving {statement}")
+        print(f"Resolving {statement}")
         statement.accept(self)
 
     def begin_scope(self):
-        # print("begin_scope")
+        print("begin_scope")
         self.scopes.append({})
 
     def end_scope(self):
-        # print("end_scope")
+        print("end_scope")
         self.scopes.pop()
 
     def visit_literal_expr(self, expr: "Expr"):
@@ -82,13 +82,15 @@ class Resolver(Visitor):
     def visit_variable_expr(self, expr: "Expr"):
         if self.scopes and self.scopes[-1].get(expr.name.lexeme) is False:
             raise CompilerError("Can't read local variable in its own initializer")
-        self.resolve_local(expr, expr.name)
+        self.resolve_local(expr, expr.name.lexeme)
         return None
 
     def resolve_local(self, expr: "Expr", name: "Token"):
-        # print(f"resolve_local expr={expr}, token={name}")
+        print(f"resolve_local: expr={expr}, token={name}")
+        print(expr, id(expr))
         for i in range(len(self.scopes) - 1, -1, -1):
-            if name.lexeme in self.scopes[i].keys():
+            if expr in self.scopes[i].keys():
+                print(f"resolve_local: resolve {name.lexeme} at {len(self.scopes) - 1 - i} ")
                 self.interpreter.resolve(expr, len(self.scopes) - 1 - i)
                 return
 
@@ -105,7 +107,9 @@ class Resolver(Visitor):
 
         # Get the last scope
         scope = self.scopes[-1]
+        breakpoint()
         scope[name] = False
+        print(f"declare: scope={scope}")
 
     def define(self, name):
         if not self.scopes:
@@ -114,6 +118,8 @@ class Resolver(Visitor):
         # Get the last scope
         scope = self.scopes[-1]
         scope[name] = True
+        print(name, id(name))
+        print(f"define: scope={scope}")
 
     def visit_if_stmt(self, stmt: "Stmt"):
         self.resolve(stmt.condition)
