@@ -8,6 +8,7 @@ class CompilerError(Exception):
     """
     Represents all errors that can occur in the Resolver
     """
+    
 
 
 class Resolver(Visitor):
@@ -113,7 +114,8 @@ class Resolver(Visitor):
 
         # Get the last scope
         scope = self.scopes[-1]
-
+        if name in scope:
+            raise CompilerError(f"Already a variable called '{name}' defined in scope")
         scope[name] = False
         logger.debug(f"declare: scope={scope}")
 
