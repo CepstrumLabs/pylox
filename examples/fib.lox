@@ -9,7 +9,7 @@ fun fib(n) {
 }
 
 print "Fibonnacci program" ;
-for (var i=1; i<20; i=i+1) {
+for (var i=1; i<10; i=i+1) {
     print "Fib " + i + ": " + fib(i);
 }
 
