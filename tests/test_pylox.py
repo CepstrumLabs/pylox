@@ -79,8 +79,3 @@ def test_print_statements(interpreter):
     source = "print 1;\nprint 2;"
     interpreter.run(source=source)
     assert not interpreter.had_error
-
-def test_class_decl(interpreter):
-    source = "class MyClass {};"
-    interpreter.run(source=source)
-    assert not interpreter.had_error
