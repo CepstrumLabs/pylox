@@ -79,8 +79,9 @@ class LoxIntepreter:
         statements = []
         try:
             statements = parser.parse()
-        except ParserError:
+        except ParserError as e:
             self.had_error = True
+            self.error = e
         logger.debug("Finished parsing")
 
         try:

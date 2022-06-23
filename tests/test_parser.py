@@ -1,10 +1,10 @@
 from .context import pylox
 
-from pylox.expr import Literal, Binary, Unary
+from pylox.expr import Literal, Binary, Unary, Variable
 from pylox.tokens import TokenType
 from pylox.scanner import LoxToken
 from pylox.parser import Parser
-from pylox.stmt import Expression, Stmt, Print
+from pylox.stmt import Expression, Stmt, Print, Function, Var
 
 
 def create_number_token(value, line=1, offset=0):
@@ -14,6 +14,9 @@ def create_number_token(value, line=1, offset=0):
 def create_string_token(value, line=1, offset=0):
     assert isinstance(value, str), f'Can\'t create string token with value {value}'
     return LoxToken(type_=TokenType.STRING, lexeme=f'{value}', literal=value, line=line, offset=offset)
+
+def create_identifier(value, line=1, offset=0):
+    return LoxToken(type_=TokenType.IDENTIFIER, lexeme=value, literal=None, line=line, offset=offset)
 
 def create_token(type_, line=1, offset=0):
     lexeme = TokenType.TOKENS_TO_LEXEMES[type_]
@@ -106,6 +109,16 @@ class TestParser:
         """
         tokens = [create_string_token(value="imastring"), create_token(type_=TokenType.SEMICOLON)]
         expected = [Expression(expression=create_literal(value="imastring"))]
+        parser = Parser(tokens=tokens)
+        expr = parser.parse()
+        assert expr == expected
+    
+    def test_parses_function(self):
+        """
+        Ensure that an primary is parsed as expected
+        """
+        tokens = [create_token(type_=TokenType.FUN), create_identifier(value="myFun"), create_token(type_=TokenType.LEFT_PAREN), create_token(type_=TokenType.RIGHT_PAREN), create_token(type_=TokenType.LEFT_BRACE), create_token(type_=TokenType.RIGHT_BRACE)]
+        expected = [Function(name=Variable(name=LoxToken(type_=TokenType.IDENTIFIER, lexeme='myFun', literal=None, line=1, offset=0)), body=[], params=[])]
         parser = Parser(tokens=tokens)
         expr = parser.parse()
         assert expr == expected
