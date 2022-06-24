@@ -71,3 +71,7 @@ class Visitor(ABC):
     @abstractmethod
     def visit_return_stmt(self, stmt: "Stmt"):
         raise NotImplementedError("Subclasses should implement this method")
+
+    @abstractmethod
+    def visit_class_stmt(self, stmt: "Stmt"):
+        raise NotImplementedError("Subclasses should implement this method")

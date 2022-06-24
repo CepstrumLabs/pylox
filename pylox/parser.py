@@ -2,7 +2,7 @@ from typing import List
 
 from pylox.expr import Assign, Binary, Call, Grouping, Literal, Logical, Unary, Variable
 from pylox.scanner import LoxToken, error
-from pylox.stmt import Block, Expression, Function, If, Print, Return, Var, While
+from pylox.stmt import Block, Class, Expression, Function, If, Print, Return, Var, While
 from pylox.tokens import TokenType
 
 
@@ -24,8 +24,11 @@ class Parser:
     ========
 
     program -> declaration* EOF ;
-    declaration -> varDeclaration | statement | func_declaration ;
-    func_declaration -> "fun" + "(" parameters? ")" block ;
+    declaration -> varDeclaration | statement | func_declaration | class_declaration ;
+    class_declaration -> "class" + IDENTIFIER + "{" function* "}" ;
+    func_declaration -> "fun" + function;
+
+    function -> IDENTIFIER "(" parameters? ")" block
     parameters -> IDENTIFIER ("," IDENTIFIER) ;
     statement -> expressionStmt | printStatement | block | if_stmt | while_stmt | for_stmt | return_stmt ;
     return_stmt -> "return" expression? ";" ;
@@ -78,6 +81,8 @@ class Parser:
                 return self.var_declaration()
             elif self.match(TokenType.FUN):
                 return self.func_declaration()
+            elif self.match(TokenType.CLASS):
+                return self.class_declaration()
             return self.statement()
 
         except ParserError as e:
@@ -97,6 +102,26 @@ class Parser:
             type_=TokenType.SEMICOLON, msg="Expected ';' after variable declaration"
         )
         return Var(name=name, initialiser=initialiser)
+
+    def class_declaration(self):
+        """
+        class_declaration -> "class" + IDENTIFIER + "{" function* "}" ;
+        func_declaration -> "fun" + function;
+        function -> IDENTIFIER "(" parameters? ")" block
+
+        """
+
+        class_name = self.identifier()
+        methods = []
+        self.consume(
+            TokenType.LEFT_BRACE, "Class body must start after class declaration"
+        )
+        while not self._check(TokenType.RIGHT_BRACE) and not self.is_at_end():
+            methods.append(self.func_declaration())
+        self.consume(
+            TokenType.RIGHT_BRACE, "Class body must finish after class declaration"
+        )
+        return Class(name=class_name, methods=methods)
 
     def func_declaration(self):
         """

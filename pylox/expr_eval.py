@@ -2,6 +2,7 @@ import copy
 from typing import List
 
 from pylox.callable import ReturnVal
+from pylox.classes import LoxClass
 from pylox.environment import Environment
 from pylox.function import LoxFunction
 from pylox.logging import logger
@@ -140,6 +141,12 @@ class ExpressionInterpreter(Visitor):
     def visit_function_stmt(self, stmt: "Function"):
         function = LoxFunction(stmt=stmt, closure=self.environ)
         self.environ.define(stmt.name.name.lexeme, function)
+
+    def visit_class_stmt(self, stmt: "Class"):
+        lexeme = stmt.name.name.lexeme
+        self.environ.define(lexeme, None)
+        klass = LoxClass(name=lexeme)
+        self.environ.assign(lexeme, klass)
 
     def visit_variable_expr(self, expr: "Expr"):
         value = None
