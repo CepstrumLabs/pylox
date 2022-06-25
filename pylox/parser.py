@@ -1,3 +1,4 @@
+from tokenize import Token
 from typing import List
 
 from pylox.expr import Assign, Binary, Call, Grouping, Literal, Logical, Unary, Variable
@@ -50,9 +51,9 @@ class Parser:
     term -> factor ( ("-" | "+") factor)* ;
     factor -> unary ( ("*" | "/") unary)* ;
     unary ->("!" | "-") unary | call ;
-    call -> primary ("(" arguments ")")*
+    call -> primary ("(" arguments ")" | '.'IDENTIFIER )* ;
     arguments -> expression ( "," expression)*
-    primary -> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
+    primary -> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" | IDENTIFIER ;
     '''
     A parser has two responsibilities:
     a) Given a valid sequence of tokens, produce a corresponding syntaxt tree
@@ -371,6 +372,9 @@ class Parser:
         while True:
             if self.match(TokenType.LEFT_PAREN):
                 expression = self._finish_call(callee=expression)
+            elif self.match(TokenType.DOT):
+                name = self.consume(TokenType.IDENTIFIER, "expect identifier after .")
+                expression = Get(expr, name)
             else:
                 break
         return expression

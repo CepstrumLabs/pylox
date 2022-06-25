@@ -6,7 +6,7 @@ class LoxInstace:
         self.klass = klass
 
     def __repr__(self):
-        return f"{self.klass} instance"
+        return f"{self.klass.name} instance"
 
     def __str__(self):
         return self.__repr__()
