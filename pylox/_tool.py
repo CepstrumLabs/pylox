@@ -147,6 +147,7 @@ def generate_ast(directory):
         "If: Expr condition, Stmt then_branch, Stmt else_branch",
         "While: Expr condition, Stmt statement",
         "Function: Token name, List[Stmt] body, List[Token] params",
+        "Class: Token name, List[Function] methods",
         "Return: Token keyword, Expr value",
     ]
 

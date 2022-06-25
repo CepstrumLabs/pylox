@@ -2,6 +2,7 @@ import copy
 from typing import List
 
 from pylox.callable import ReturnVal
+from pylox.classes import LoxClass
 from pylox.environment import Environment
 from pylox.function import LoxFunction
 from pylox.logging import logger
@@ -141,6 +142,12 @@ class ExpressionInterpreter(Visitor):
         function = LoxFunction(stmt=stmt, closure=self.environ)
         self.environ.define(stmt.name.name.lexeme, function)
 
+    def visit_class_stmt(self, stmt: "Class"):
+        lexeme = stmt.name.name.lexeme
+        self.environ.define(lexeme, None)
+        klass = LoxClass(name=lexeme)
+        self.environ.assign(lexeme, klass)
+
     def visit_variable_expr(self, expr: "Expr"):
         value = None
         try:
@@ -197,8 +204,15 @@ class ExpressionInterpreter(Visitor):
 
         for argument in expr.arguments:
             arguments.append(self.evaluate(argument))
-        if not isinstance(callee, LoxFunction):
+
+        if not isinstance(callee, (LoxFunction, LoxClass)):
             raise LoxRuntimeError(msg="you can only call functions")
+        arity = callee.arity()
+        if len(arguments) != arity:
+            raise LoxRuntimeError(
+                msg=f"expected {arity} arguments but got {len(arguments)} for function {expr.callee.name.lexeme}",
+                token=expr.callee.name,
+            )
         return callee.call(self, arguments)
 
     def visit_return_stmt(self, stmt: "Stmt"):

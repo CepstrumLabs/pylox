@@ -1,8 +1,9 @@
+from tokenize import Token
 from typing import List
 
 from pylox.expr import Assign, Binary, Call, Grouping, Literal, Logical, Unary, Variable
 from pylox.scanner import LoxToken, error
-from pylox.stmt import Block, Expression, Function, If, Print, Return, Var, While
+from pylox.stmt import Block, Class, Expression, Function, If, Print, Return, Var, While
 from pylox.tokens import TokenType
 
 
@@ -24,8 +25,11 @@ class Parser:
     ========
 
     program -> declaration* EOF ;
-    declaration -> varDeclaration | statement | func_declaration ;
-    func_declaration -> "fun" + "(" parameters? ")" block ;
+    declaration -> varDeclaration | statement | func_declaration | class_declaration ;
+    class_declaration -> "class" + IDENTIFIER + "{" function* "}" ;
+    func_declaration -> "fun" + function;
+
+    function -> IDENTIFIER "(" parameters? ")" block
     parameters -> IDENTIFIER ("," IDENTIFIER) ;
     statement -> expressionStmt | printStatement | block | if_stmt | while_stmt | for_stmt | return_stmt ;
     return_stmt -> "return" expression? ";" ;
@@ -47,9 +51,9 @@ class Parser:
     term -> factor ( ("-" | "+") factor)* ;
     factor -> unary ( ("*" | "/") unary)* ;
     unary ->("!" | "-") unary | call ;
-    call -> primary ("(" arguments ")")*
+    call -> primary ("(" arguments ")" | '.'IDENTIFIER )* ;
     arguments -> expression ( "," expression)*
-    primary -> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
+    primary -> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" | IDENTIFIER ;
     '''
     A parser has two responsibilities:
     a) Given a valid sequence of tokens, produce a corresponding syntaxt tree
@@ -78,6 +82,8 @@ class Parser:
                 return self.var_declaration()
             elif self.match(TokenType.FUN):
                 return self.func_declaration()
+            elif self.match(TokenType.CLASS):
+                return self.class_declaration()
             return self.statement()
 
         except ParserError as e:
@@ -98,6 +104,26 @@ class Parser:
         )
         return Var(name=name, initialiser=initialiser)
 
+    def class_declaration(self):
+        """
+        class_declaration -> "class" + IDENTIFIER + "{" function* "}" ;
+        func_declaration -> "fun" + function;
+        function -> IDENTIFIER "(" parameters? ")" block
+
+        """
+
+        class_name = self.identifier()
+        methods = []
+        self.consume(
+            TokenType.LEFT_BRACE, "Class body must start after class declaration"
+        )
+        while not self._check(TokenType.RIGHT_BRACE) and not self.is_at_end():
+            methods.append(self.func_declaration())
+        self.consume(
+            TokenType.RIGHT_BRACE, "Class body must finish after class declaration"
+        )
+        return Class(name=class_name, methods=methods)
+
     def func_declaration(self):
         """
         func_declaration -> "fun" IDENTIFIER "(" parameters? ")" block ;
@@ -113,7 +139,7 @@ class Parser:
         if not self._check(TokenType.RIGHT_PAREN):
             parameters.append(self.identifier())
             while self.match(TokenType.COMMA):
-                parameters.append(self.identifiier())
+                parameters.append(self.identifier())
         self.consume(
             TokenType.RIGHT_PAREN,
             "right parenthesis is required after function declaration",
@@ -346,6 +372,9 @@ class Parser:
         while True:
             if self.match(TokenType.LEFT_PAREN):
                 expression = self._finish_call(callee=expression)
+            elif self.match(TokenType.DOT):
+                name = self.consume(TokenType.IDENTIFIER, "expect identifier after .")
+                expression = Get(expr, name)
             else:
                 break
         return expression

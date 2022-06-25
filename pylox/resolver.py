@@ -78,6 +78,10 @@ class Resolver(Visitor):
         self.define(stmt.name.name.lexeme)
         self._resolve_function(statement=stmt, function_type=FunctionType.FUNCTION)
 
+    def visit_class_stmt(self, stmt: "Stmt"):
+        self.declare(stmt.name)
+        self.define(stmt.name)
+
     def _resolve_function(self, statement, function_type):
         self.begin_scope()
 
