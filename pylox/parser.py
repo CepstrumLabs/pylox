@@ -138,7 +138,7 @@ class Parser:
         if not self._check(TokenType.RIGHT_PAREN):
             parameters.append(self.identifier())
             while self.match(TokenType.COMMA):
-                parameters.append(self.identifiier())
+                parameters.append(self.identifier())
         self.consume(
             TokenType.RIGHT_PAREN,
             "right parenthesis is required after function declaration",
