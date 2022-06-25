@@ -1,2 +1,2 @@
-fun myfun(arg) { print arg; }
+fun myfun(arg, b) { print arg; }
 myfun(10);

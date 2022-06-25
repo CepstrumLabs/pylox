@@ -8,6 +8,9 @@ class LoxFunction(LoxCallable):
         self.declaration = stmt
         self.closure = closure
 
+    def arity(self):
+        return len(self.declaration.params)
+
     def call(self, interpreter, arguments):
         environment = Environment(self.closure)
         for index, _ in enumerate(self.declaration.params):
