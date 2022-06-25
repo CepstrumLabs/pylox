@@ -84,4 +84,3 @@ def test_class_decl(interpreter):
     source = "class MyClass {}"
     interpreter.run(source=source)
     assert not interpreter.had_error
-

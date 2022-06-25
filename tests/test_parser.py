@@ -122,3 +122,4 @@ class TestParser:
         parser = Parser(tokens=tokens)
         expr = parser.parse()
         assert expr == expected
+

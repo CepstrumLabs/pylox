@@ -1,0 +1,11 @@
+class FirstClass {
+
+    method() {
+        return "return";
+    }
+}
+
+print FirstClass;
+var a = FirstClass();
+print a;
+
