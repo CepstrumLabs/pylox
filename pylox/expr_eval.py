@@ -204,12 +204,14 @@ class ExpressionInterpreter(Visitor):
 
         for argument in expr.arguments:
             arguments.append(self.evaluate(argument))
+
         if not isinstance(callee, (LoxFunction, LoxClass)):
             raise LoxRuntimeError(msg="you can only call functions")
         arity = callee.arity()
         if len(arguments) != arity:
             raise LoxRuntimeError(
-                msg="expected {arity} arguments but got {len(arguments)} for function {callee.name}"
+                msg=f"expected {arity} arguments but got {len(arguments)} for function {expr.callee.name.lexeme}",
+                token=expr.callee.name,
             )
         return callee.call(self, arguments)
 

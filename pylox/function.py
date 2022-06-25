@@ -7,6 +7,7 @@ class LoxFunction(LoxCallable):
     def __init__(self, stmt: Function, closure: Environment):
         self.declaration = stmt
         self.closure = closure
+        self.name = self.declaration.name
 
     def arity(self):
         return len(self.declaration.params)
