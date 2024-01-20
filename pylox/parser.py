@@ -26,12 +26,13 @@ class Parser:
     program -> declaration* EOF ;
     declaration -> varDeclaration | statement | func_declaration ;
     func_declaration -> "fun" + "(" parameters? ")" block ;
-    parameters -> IDENTIFIER ("," IDENTIFIER) ;
+    parameters -> IDENTIFIER ("," IDENTIFIER)* ;
     statement -> expressionStmt | printStatement | block | if_stmt | while_stmt | for_stmt | return_stmt ;
     return_stmt -> "return" expression? ";" ;
     if_stmt -> "if" + "(" expression ")" statement ("else" statement)? ;
     while_stmt -> "while" + "(" expression ")" statement;
     for_stmt -> "for" + "(" ( varDeclaration | expressionStmt | ";" ) +  expression? ";" + expression? ")" statement ;
+    varDeclaration -> "var" IDENTIFIER ( "=" expression )? ";" ;
     block -> "{" declaration* "}" ;
     expressionStmt -> expression ";" ;
     printStatement -> print expression ";" ;
